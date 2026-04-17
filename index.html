@@ -429,7 +429,7 @@
       }
     });
 
-    audio.addEventListener('playing', () => { status.textContent = ''; });
+    audio.addEventListener('playing', () => { /* DEBUG: status clear disabled */ });
     audio.addEventListener('waiting', () => { status.textContent = 'Buffering...'; });
     audio.addEventListener('error',   () => {
       status.textContent = 'Stream error. Try again.';
