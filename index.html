@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Forge Christian Radio — Listen Live</title>
+  <link rel="apple-touch-icon" href="forge-icon.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="forge-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="forge-icon-192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -382,7 +385,7 @@
 
     // ---- Player ----
     const STREAM = 'https://streaming.live365.com/a31364';
-    const META   = 'https://api.live365.com/station/a31364';
+    const META   = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.live365.com/station/a31364');
 
     const audio   = document.getElementById('audio');
     const btn     = document.getElementById('playBtn');
@@ -438,11 +441,16 @@
     async function fetchMeta() {
       try {
         const res  = await fetch(META);
-        if (!res.ok) throw new Error();
-        const data = await res.json();
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const text = await res.text();
+
+        // Show raw response in status for debugging
+        status.textContent = text.substring(0, 120);
+
+        const data = JSON.parse(text);
 
         // Handle various Live365 response shapes
-        const title  = data?.now_playing?.title  || data?.track_title  || data?.title  || null;
+        const title  = data?.now_playing?.title  || data?.track_title  || data?.title  || data?.song || null;
         const artist = data?.now_playing?.artist || data?.artist_name  || data?.artist || null;
 
         let display = 'Live on Air';
@@ -451,7 +459,9 @@
         else if (artist) display = artist;
 
         setTrack(display);
-      } catch {
+        status.textContent = '';
+      } catch(e) {
+        status.textContent = 'Debug: ' + e.message;
         setTrack('Live on Air');
       }
     }
