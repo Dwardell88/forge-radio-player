@@ -444,22 +444,9 @@
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const text = await res.text();
 
-        // Show raw response in status for debugging
-        status.textContent = text.substring(0, 120);
-
-        const data = JSON.parse(text);
-
-        // Handle various Live365 response shapes
-        const title  = data?.now_playing?.title  || data?.track_title  || data?.title  || data?.song || null;
-        const artist = data?.now_playing?.artist || data?.artist_name  || data?.artist || null;
-
-        let display = 'Live on Air';
-        if (artist && title) display = `${artist}  \u2014  ${title}`;
-        else if (title)  display = title;
-        else if (artist) display = artist;
-
-        setTrack(display);
-        status.textContent = '';
+        // DEBUG - freeze raw response so we can read it
+        status.textContent = 'RAW: ' + text.substring(0, 200);
+        return;
       } catch(e) {
         status.textContent = 'Debug: ' + e.message;
         setTrack('Live on Air');
