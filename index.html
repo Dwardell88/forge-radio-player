@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Forge Christian Radio — Listen Live</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --fire:   #FF6B00;
+      --amber:  #FFB300;
+      --ember:  #CC2200;
+      --bg:     #070707;
+      --card:   #0F0F0F;
+      --text:   #F2EDE4;
+      --muted:  #666;
+    }
+
+    body {
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Rajdhani', sans-serif;
+      overflow: hidden;
+    }
+
+    /* ---- Ember particles ---- */
+    #embers {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .ember {
+      position: absolute;
+      bottom: -10px;
+      width: var(--sz);
+      height: var(--sz);
+      border-radius: 50%;
+      background: var(--fire);
+      opacity: 0;
+      box-shadow: 0 0 6px 2px var(--fire);
+      animation: riseUp var(--dur) ease-in var(--del) infinite;
+    }
+
+    @keyframes riseUp {
+      0%   { opacity: 0;   transform: translateY(0)     translateX(0)       scale(1); }
+      15%  { opacity: 0.9; }
+      70%  { opacity: 0.4; }
+      100% { opacity: 0;   transform: translateY(-100vh) translateX(var(--drift)) scale(0.2); }
+    }
+
+    /* ---- Glow border wrapper ---- */
+    .glow-border {
+      position: relative;
+      z-index: 10;
+      padding: 2px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--fire), var(--ember), var(--amber), var(--fire));
+      background-size: 300% 300%;
+      animation: borderShift 5s ease infinite;
+      box-shadow:
+        0 0 40px rgba(255,107,0,0.35),
+        0 0 100px rgba(255,107,0,0.12);
+    }
+
+    @keyframes borderShift {
+      0%,100% { background-position: 0% 50%; }
+      50%      { background-position: 100% 50%; }
+    }
+
+    /* ---- Card ---- */
+    .card {
+      width: 400px;
+      max-width: 94vw;
+      background: linear-gradient(170deg, #161410 0%, #0A0A08 55%, #111008 100%);
+      border-radius: 5px;
+      padding: 40px 44px 42px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 100%, rgba(255,107,0,0.10) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 20%,  rgba(204, 34,  0,0.05) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    /* ---- Logo ---- */
+    .logo {
+      width: 120px;
+      height: auto;
+      display: block;
+      margin: 0 auto 10px;
+      filter: drop-shadow(0 0 14px rgba(255,107,0,0.55));
+    }
+
+    /* ---- Station name ---- */
+    .station-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      letter-spacing: 0.1em;
+      line-height: 1;
+      color: var(--text);
+      text-shadow: 0 0 24px rgba(255,107,0,0.45);
+    }
+
+    .station-sub {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--fire);
+      margin-bottom: 26px;
+      opacity: 0.9;
+    }
+
+    /* ---- LIVE badge ---- */
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid rgba(255,107,0,0.35);
+      background: rgba(255,107,0,0.08);
+      border-radius: 3px;
+      padding: 5px 12px 5px 9px;
+      margin-bottom: 30px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--fire);
+      box-shadow: 0 0 8px var(--fire);
+      animation: dotPulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes dotPulse {
+      0%,100% { opacity: 1;   transform: scale(1);   }
+      50%      { opacity: 0.3; transform: scale(0.75); }
+    }
+
+    .live-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      color: var(--fire);
+      text-transform: uppercase;
+    }
+
+    /* ---- Play button ---- */
+    .play-btn {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 30px;
+      background: radial-gradient(circle at 38% 32%, #FF8C00, #B81A00);
+      box-shadow:
+        0 0 0 1px rgba(255,107,0,0.45),
+        0 0 22px rgba(255,107,0,0.5),
+        0 0 55px rgba(255,107,0,0.22),
+        inset 0 1px 0 rgba(255,200,100,0.35);
+      transition: transform 0.14s ease, box-shadow 0.14s ease;
+      position: relative;
+    }
+
+    .play-btn:hover {
+      transform: scale(1.07);
+      box-shadow:
+        0 0 0 1px rgba(255,107,0,0.65),
+        0 0 32px rgba(255,107,0,0.7),
+        0 0 75px rgba(255,107,0,0.3),
+        inset 0 1px 0 rgba(255,200,100,0.35);
+    }
+
+    .play-btn:active { transform: scale(0.96); }
+
+    .play-btn svg {
+      width: 34px;
+      height: 34px;
+      fill: #fff;
+      filter: drop-shadow(0 1px 4px rgba(0,0,0,0.6));
+      transition: margin 0.1s;
+    }
+
+    /* Offset play icon optically */
+    .play-btn.idle svg { margin-left: 4px; }
+
+    /* Radiating ring when playing */
+    .play-btn.playing::after {
+      content: '';
+      position: absolute;
+      inset: -10px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,107,0,0.5);
+      animation: ringExpand 2s ease-out infinite;
+    }
+
+    @keyframes ringExpand {
+      0%   { opacity: 0.7; transform: scale(1); }
+      100% { opacity: 0;   transform: scale(1.5); }
+    }
+
+    /* ---- Audio bars ---- */
+    .audio-bars {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 4px;
+      height: 22px;
+      margin: 0 auto 18px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .audio-bars.active { opacity: 1; }
+
+    .bar {
+      width: 4px;
+      border-radius: 2px;
+      background: linear-gradient(to top, var(--ember), var(--amber));
+      box-shadow: 0 0 5px var(--fire);
+      animation: barBounce var(--spd) ease-in-out var(--dly) infinite alternate;
+    }
+
+    @keyframes barBounce {
+      from { height: 4px;  opacity: 0.5; }
+      to   { height: 20px; opacity: 1;   }
+    }
+
+    /* ---- Now Playing ---- */
+    .np-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 7px;
+    }
+
+    .np-track {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      height: 1.45em;
+      position: relative;
+    }
+
+    .np-inner {
+      display: inline-block;
+      white-space: nowrap;
+      transition: none;
+    }
+
+    .np-inner.scrolling {
+      animation: ticker 14s linear infinite;
+    }
+
+    @keyframes ticker {
+      0%   { transform: translateX(110%); }
+      100% { transform: translateX(-110%); }
+    }
+
+    /* ---- Status / divider ---- */
+    .status {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      min-height: 1.3em;
+      margin-top: 12px;
+    }
+
+    .divider {
+      width: 50px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--fire), transparent);
+      margin: 16px auto 0;
+      opacity: 0.35;
+    }
+
+    /* ---- Site link ---- */
+    .site-link {
+      display: block;
+      margin-top: 18px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: rgba(255,107,0,0.5);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .site-link:hover { color: var(--fire); }
+  </style>
+</head>
+<body>
+
+  <div id="embers"></div>
+
+  <div class="glow-border">
+    <div class="card">
+
+      <img
+        class="logo"
+        src="https://primary.jwwb.nl/public/t/p/i/temp-opjgvzhfvplwbkmudlqi/image-high-sbvtt3.png"
+        alt="The Forge Christian Radio"
+        onerror="this.style.display='none'"
+      />
+
+      <div class="station-name">THE FORGE</div>
+      <div class="station-sub">Christian Radio</div>
+
+      <div class="live-badge">
+        <div class="live-dot"></div>
+        <span class="live-label">Live Stream</span>
+      </div>
+
+      <button class="play-btn idle" id="playBtn" aria-label="Play / Pause">
+        <svg viewBox="0 0 24 24" id="btnIcon"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+
+      <div class="audio-bars" id="bars">
+        <div class="bar" style="--spd:.55s;--dly:0s"></div>
+        <div class="bar" style="--spd:.80s;--dly:.10s"></div>
+        <div class="bar" style="--spd:.60s;--dly:.20s"></div>
+        <div class="bar" style="--spd:.90s;--dly:.05s"></div>
+        <div class="bar" style="--spd:.70s;--dly:.15s"></div>
+      </div>
+
+      <div class="np-label">Now Playing</div>
+      <div class="np-track">
+        <span class="np-inner" id="npInner">Tap play to listen</span>
+      </div>
+
+      <div class="status" id="status"></div>
+      <div class="divider"></div>
+      <a class="site-link" href="https://www.theforgeradio.org" target="_blank" rel="noopener">
+        theforgeradio.org
+      </a>
+
+    </div>
+  </div>
+
+  <audio id="audio" preload="none"></audio>
+
+  <script>
+    // ---- Ember particles ----
+    const embers = document.getElementById('embers');
+    for (let i = 0; i < 28; i++) {
+      const e = document.createElement('div');
+      e.className = 'ember';
+      const big = Math.random() > 0.72;
+      e.style.setProperty('--sz',    `${big ? 4 : 2}px`);
+      e.style.setProperty('--dur',   `${3.5 + Math.random() * 5}s`);
+      e.style.setProperty('--del',   `${Math.random() * 7}s`);
+      e.style.setProperty('--drift', `${(Math.random() - 0.5) * 80}px`);
+      e.style.left = `${Math.random() * 100}%`;
+      if (big) e.style.background = '#FFB300';
+      embers.appendChild(e);
+    }
+
+    // ---- Player ----
+    const STREAM = 'https://streaming.live365.com/a31364';
+    const META   = 'https://api.live365.com/station/a31364';
+
+    const audio   = document.getElementById('audio');
+    const btn     = document.getElementById('playBtn');
+    const icon    = document.getElementById('btnIcon');
+    const bars    = document.getElementById('bars');
+    const npInner = document.getElementById('npInner');
+    const status  = document.getElementById('status');
+
+    const PLAY_PATH  = '<path d="M8 5v14l11-7z"/>';
+    const PAUSE_PATH = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+
+    let playing = false;
+    let metaTimer = null;
+
+    function setState(on) {
+      playing = on;
+      icon.innerHTML = on ? PAUSE_PATH : PLAY_PATH;
+      btn.classList.toggle('playing', on);
+      btn.classList.toggle('idle',    !on);
+      bars.classList.toggle('active', on);
+    }
+
+    btn.addEventListener('click', () => {
+      if (!playing) {
+        audio.src = STREAM;
+        audio.play().catch(() => {
+          status.textContent = 'Playback blocked. Tap again.';
+          setState(false);
+          audio.src = '';
+        });
+        setState(true);
+        status.textContent = 'Connecting...';
+        fetchMeta();
+        metaTimer = setInterval(fetchMeta, 30000);
+      } else {
+        audio.pause();
+        audio.src = '';
+        setState(false);
+        status.textContent = '';
+        clearInterval(metaTimer);
+      }
+    });
+
+    audio.addEventListener('playing', () => { status.textContent = ''; });
+    audio.addEventListener('waiting', () => { status.textContent = 'Buffering...'; });
+    audio.addEventListener('error',   () => {
+      status.textContent = 'Stream error. Try again.';
+      setState(false);
+      audio.src = '';
+      clearInterval(metaTimer);
+    });
+
+    async function fetchMeta() {
+      try {
+        const res  = await fetch(META);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+
+        // Handle various Live365 response shapes
+        const title  = data?.now_playing?.title  || data?.track_title  || data?.title  || null;
+        const artist = data?.now_playing?.artist || data?.artist_name  || data?.artist || null;
+
+        let display = 'Live on Air';
+        if (artist && title) display = `${artist}  \u2014  ${title}`;
+        else if (title)  display = title;
+        else if (artist) display = artist;
+
+        setTrack(display);
+      } catch {
+        setTrack('Live on Air');
+      }
+    }
+
+    function setTrack(text) {
+      npInner.textContent = text;
+      npInner.classList.remove('scrolling');
+      requestAnimationFrame(() => {
+        if (npInner.scrollWidth > npInner.parentElement.clientWidth + 4) {
+          npInner.classList.add('scrolling');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
