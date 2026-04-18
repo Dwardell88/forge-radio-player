@@ -519,7 +519,7 @@
 
 
 
-<audio id="audio" src="" preload="none" style="display:none"></audio>
+<audio id="audio" preload="auto" playsinline x-webkit-airplay="allow" style="display:none"></audio>
 
 <script>
   // ---- Intro: video plays, fades at 3s, logo/button appear ----
@@ -596,41 +596,101 @@
     }
   });
 
-  // ---- Chromecast ----
+  // ---- Stream setup ----
   const STREAM = 'https://streaming.live365.com/a31364';
   const audio  = document.getElementById('audio');
+  const castBtn = document.getElementById('castBtn');
+  const airplayBtn = document.getElementById('airplayBtn');
+  let castSession = null;
 
-  window['__onGCastApiAvailable'] = function(isAvailable) {
-    if (!isAvailable) return;
-    const castBtn = document.getElementById('castBtn');
+  // ---- Chromecast (Android / supported browsers) ----
+  window.__onGCastApiAvailable = function(isAvailable) {
+    if (!isAvailable) {
+      console.log('Google Cast API not available on this device/browser.');
+      return;
+    }
+
     const context = cast.framework.CastContext.getInstance();
     context.setOptions({
       receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
       autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
     });
-    castBtn.addEventListener('click', async () => {
-      try {
-        await context.requestSession();
-        const session = context.getCurrentSession();
-        if (session) {
-          const mediaInfo = new chrome.cast.media.MediaInfo(STREAM, 'audio/mpeg');
-          mediaInfo.streamType = chrome.cast.media.StreamType.LIVE;
-          const request = new chrome.cast.media.LoadRequest(mediaInfo);
-          request.autoplay = true;
-          await session.loadMedia(request);
+
+    castBtn.addEventListener('click', startCasting);
+
+    context.addEventListener(
+      cast.framework.CastContextEventType.SESSION_STATE_CHANGED,
+      (event) => {
+        console.log('Cast session state:', event.sessionState);
+
+        if (event.sessionState === cast.framework.SessionState.SESSION_STARTED ||
+            event.sessionState === cast.framework.SessionState.SESSION_RESUMED) {
+          castSession = context.getCurrentSession();
         }
-      } catch(e) { console.log('Cast cancelled', e); }
-    });
+
+        if (event.sessionState === cast.framework.SessionState.SESSION_ENDED) {
+          castSession = null;
+        }
+      }
+    );
   };
 
-  // ---- AirPlay (iOS) ----
-  const airplayBtn = document.getElementById('airplayBtn');
-  if (window.WebKitPlaybackTargetAvailabilityEvent) {
-    audio.src = STREAM;
+  async function startCasting() {
+    try {
+      const context = cast.framework.CastContext.getInstance();
+      await context.requestSession();
+      castSession = context.getCurrentSession();
+
+      if (!castSession) {
+        console.log('No active Cast session found after requestSession().');
+        return;
+      }
+
+      await playOnTV();
+    } catch (err) {
+      console.error('Cast start error:', err);
+    }
+  }
+
+  async function playOnTV() {
+    if (!castSession) return;
+
+    try {
+      const mediaInfo = new chrome.cast.media.MediaInfo(STREAM, 'audio/mpeg');
+      mediaInfo.streamType = chrome.cast.media.StreamType.LIVE;
+
+      mediaInfo.metadata = new chrome.cast.media.MusicTrackMediaMetadata();
+      mediaInfo.metadata.title = 'THE FORGE';
+      mediaInfo.metadata.artist = 'Christian Radio';
+
+      const request = new chrome.cast.media.LoadRequest(mediaInfo);
+      request.autoplay = true;
+
+      await castSession.loadMedia(request);
+      console.log('Casting started.');
+    } catch (err) {
+      console.error('Cast media load error:', err);
+    }
+  }
+
+  // ---- AirPlay (iPhone / iPad) ----
+  audio.src = STREAM;
+
+  if ('WebKitPlaybackTargetAvailabilityEvent' in window) {
     audio.addEventListener('webkitplaybacktargetavailabilitychanged', (e) => {
       airplayBtn.style.display = e.availability === 'available' ? 'block' : 'none';
     });
-    airplayBtn.addEventListener('click', () => { audio.webkitShowPlaybackTargetPicker(); });
+
+    airplayBtn.addEventListener('click', async () => {
+      try {
+        if (audio.paused) {
+          await audio.play();
+        }
+        audio.webkitShowPlaybackTargetPicker();
+      } catch (err) {
+        console.error('AirPlay error:', err);
+      }
+    });
   }
 </script>
 </body>
