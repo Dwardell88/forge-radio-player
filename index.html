@@ -3,46 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Forge Radio Test</title>
+<title>Forge Debug Cast Test</title>
 <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
 </head>
-<body style="background:#000;color:#fff;font-family:sans-serif;text-align:center;padding-top:100px;">
+<body style="background:#111;color:#fff;font-family:sans-serif;text-align:center;padding:40px;">
 
-<h1>Forge Radio Test</h1>
+<h2>Forge Debug Cast Test</h2>
 
-<button onclick="startCasting()">Cast</button>
+<p id="status">Status: Waiting...</p>
+
+<button onclick="startCasting()">Start Cast</button>
 <button id="airplayBtn" style="display:none;">AirPlay</button>
 
 <audio id="audio" preload="auto" playsinline x-webkit-airplay="allow"></audio>
 
 <script>
 const STREAM = "https://streaming.live365.com/a31364";
+const status = document.getElementById('status');
 const audio = document.getElementById('audio');
 const airplayBtn = document.getElementById('airplayBtn');
 
 audio.src = STREAM;
 
-// ---- AIRPLAY ----
+// ---- AIRPLAY DEBUG ----
 if ('WebKitPlaybackTargetAvailabilityEvent' in window) {
+  status.innerText = "Status: AirPlay API detected";
+
   audio.addEventListener('webkitplaybacktargetavailabilitychanged', (e) => {
+    status.innerText = "AirPlay availability: " + e.availability;
     airplayBtn.style.display = e.availability === 'available' ? 'inline-block' : 'none';
   });
 
   airplayBtn.addEventListener('click', async () => {
     try {
+      status.innerText = "Trying AirPlay...";
       await audio.play();
       audio.webkitShowPlaybackTargetPicker();
     } catch (e) {
-      console.log('AirPlay error:', e);
+      status.innerText = "AirPlay error: " + e;
     }
   });
+} else {
+  status.innerText = "Status: AirPlay NOT supported";
 }
 
-// ---- CAST ----
+// ---- CAST DEBUG ----
 let castSession = null;
 
 window.__onGCastApiAvailable = function(isAvailable) {
-  if (!isAvailable) return;
+  if (!isAvailable) {
+    status.innerText = "Cast API not available";
+    return;
+  }
+
+  status.innerText = "Cast API Loaded";
 
   const context = cast.framework.CastContext.getInstance();
   context.setOptions({
@@ -53,14 +67,25 @@ window.__onGCastApiAvailable = function(isAvailable) {
 
 function startCasting() {
   const context = cast.framework.CastContext.getInstance();
+
+  status.innerText = "Requesting Cast session...";
+
   context.requestSession().then(() => {
     castSession = context.getCurrentSession();
+    status.innerText = "Cast session started";
     playOnTV();
-  }).catch(err => console.log('Cast session error:', err));
+  }).catch(err => {
+    status.innerText = "Session error: " + err;
+  });
 }
 
 function playOnTV() {
-  if (!castSession) return;
+  if (!castSession) {
+    status.innerText = "No cast session";
+    return;
+  }
+
+  status.innerText = "Loading media...";
 
   const mediaInfo = new chrome.cast.media.MediaInfo(STREAM, 'audio/mpeg');
   mediaInfo.streamType = chrome.cast.media.StreamType.LIVE;
@@ -69,8 +94,12 @@ function playOnTV() {
   request.autoplay = true;
 
   castSession.loadMedia(request)
-    .then(() => console.log("Casting started"))
-    .catch(err => console.log("Cast error:", err));
+    .then(() => {
+      status.innerText = "Casting started successfully";
+    })
+    .catch(err => {
+      status.innerText = "Media load error: " + err;
+    });
 }
 </script>
 
