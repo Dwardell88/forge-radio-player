@@ -365,14 +365,16 @@
 <body>
 
 <!-- INTRO SCREEN -->
-<div id="intro">
-  <video id="introVideo" autoplay muted playsinline>
-    <source src="TheForgeIntro.mp4" type="video/mp4">
+<div id="intro" style="cursor:pointer;" onclick="revealEnter()">
+  <video id="introVideo" autoplay muted playsinline loop style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;">
+    <source src="Intro.mp4" type="video/mp4">
   </video>
+  <audio id="introAudio" autoplay loop>
+    <source src="IntroAudio.mp3" type="audio/mpeg">
+  </audio>
   <div class="intro-content" id="introContent">
     <img class="landing-logo" src="Logo.png" alt="The Forge Christian Radio" />
-    <button class="enter-btn" id="enterBtn">Enter The Forge</button>
-    <div style="margin-top:12px;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.72);text-shadow:0 1px 4px rgba(0,0,0,0.8);">Tap to hear the intro</div>
+    <button class="enter-btn" id="enterBtn" onclick="event.stopPropagation(); enterPlayer();">Enter The Forge</button>
   </div>
 </div>
 
@@ -415,7 +417,7 @@
           </div>
           <div id="airplayNative" style="display:none;margin-top:12px;width:100%;max-width:320px;">
             <div style="font-size:0.6rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">AirPlay</div>
-            <audio id="airplayPlayer" controls preload="auto" playsinline x-webkit-airplay="allow" style="width:100%;height:32px;opacity:0.5;" src="https://streaming.live365.com/a31364"></audio>
+            <audio id="airplayPlayer" controls preload="none" playsinline x-webkit-airplay="allow" style="width:100%;height:32px;opacity:0.5;"></audio>
           </div>
         </div>
       </div>
@@ -534,70 +536,25 @@
 <audio id="audio" preload="auto" playsinline x-webkit-airplay="allow"></audio>
 
 <script>
-  // ---- Intro: video plays, fades at 3s, logo/button appear ----
-  const introVideo   = document.getElementById('introVideo');
+  const intro = document.getElementById('intro');
   const introContent = document.getElementById('introContent');
-  const intro        = document.getElementById('intro');
+  const introVideo = document.getElementById('introVideo');
+  const introAudio = document.getElementById('introAudio');
 
-  // Show logo/button after 3 seconds.
-  // Keep the video visible so the user can tap and hear the intro with sound.
-  setTimeout(() => {
-    introContent.classList.add('visible');
-  }, 3000);
-
-  const enterBtn = document.getElementById('enterBtn');
-  let introEntering = false;
-
-  function enterApp() {
-    intro.classList.add('hidden');
-    document.getElementById('player').classList.add('visible');
+  // Tap anywhere on intro screen stops media and reveals logo/button
+  function revealEnter() {
     introVideo.pause();
-    introVideo.removeAttribute('src');
-    introVideo.load();
-    setTimeout(() => { intro.style.display = 'none'; }, 900);
+    introAudio.pause();
+    introContent.classList.add('visible');
+    intro.onclick = null; // prevent double tap
   }
 
-  // ---- Enter button: use the user's tap to allow intro sound, then enter app ----
-  enterBtn.addEventListener('click', async () => {
-    if (introEntering) {
-      enterApp();
-      return;
-    }
-
-    introEntering = true;
-    enterBtn.textContent = 'Entering...';
-
-    try {
-      const remaining = (introVideo.duration || 0) - (introVideo.currentTime || 0);
-      if (introVideo.ended || remaining < 1.25) {
-        introVideo.currentTime = 0;
-      }
-
-      introVideo.muted = false;
-      introVideo.volume = 1;
-      await introVideo.play();
-
-      const finishIntro = () => {
-        introVideo.removeEventListener('ended', finishIntro);
-        enterApp();
-      };
-      introVideo.addEventListener('ended', finishIntro);
-
-      const fallbackDelay = Math.max(
-        1200,
-        Math.min(5000, ((introVideo.duration || 0) - (introVideo.currentTime || 0)) * 1000)
-      );
-
-      setTimeout(() => {
-        if (document.getElementById('intro').style.display !== 'none') {
-          enterApp();
-        }
-      }, fallbackDelay + 150);
-    } catch (err) {
-      console.log('Intro audio failed, entering app without intro sound.', err);
-      enterApp();
-    }
-  });
+  // Enter button fades to player
+  function enterPlayer() {
+    intro.classList.add('hidden');
+    document.getElementById('player').classList.add('visible');
+    setTimeout(() => { intro.style.display = 'none'; }, 900);
+  }
 
   // ---- Tab switching ----
   document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -674,11 +631,17 @@
   btn.addEventListener('click', () => {
     if (!playing) {
       audio.src = STREAM;
+      // Set airplayPlayer src so iOS detects it as castable media
+      const ap = document.getElementById('airplayPlayer');
+      if (ap) ap.src = STREAM;
       audio.play().catch(() => { status.textContent = 'Playback blocked. Tap again.'; setState(false); audio.src = ''; });
       setState(true);
       status.textContent = 'Connecting...';
     } else {
-      audio.pause(); audio.src = ''; setState(false); status.textContent = '';
+      audio.pause(); audio.src = '';
+      const ap = document.getElementById('airplayPlayer');
+      if (ap) { ap.pause(); ap.src = ''; }
+      setState(false); status.textContent = '';
     }
   });
 
