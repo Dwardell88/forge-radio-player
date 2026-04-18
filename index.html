@@ -136,7 +136,7 @@
       max-width: 480px;
       margin: 0 auto;
       padding-top: env(safe-area-inset-top);
-      background: url('playerBG.png') center top / cover no-repeat;
+      background: url('playerBG.png') center calc(env(safe-area-inset-top) + 20px) / cover no-repeat;
       opacity: 0;
       transition: opacity 0.8s ease;
     }
@@ -211,7 +211,7 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      padding-top: 20px;
+      padding-top: 220px;
     }
 
     .station-name {
