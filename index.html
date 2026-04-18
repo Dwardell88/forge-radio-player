@@ -180,7 +180,11 @@
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.2s ease;
-      padding: 20px 24px 16px;
+      padding: 220px 24px 16px;
+    }
+
+    #panel-listen {
+      padding-top: 0;
     }
 
     .panel.active { opacity: 1; pointer-events: auto; }
@@ -363,7 +367,7 @@
 <!-- INTRO SCREEN -->
 <div id="intro">
   <video id="introVideo" autoplay muted playsinline>
-    <source src="FlameEmbers.mp4" type="video/mp4">
+    <source src="TheForgeIntro.mp4" type="video/mp4">
   </video>
   <div class="intro-content" id="introContent">
     <img class="landing-logo" src="Logo.png" alt="The Forge Christian Radio" />
@@ -646,10 +650,20 @@
         const session = context.getCurrentSession();
         if (session) {
           const mediaInfo = new chrome.cast.media.MediaInfo(STREAM, 'audio/mpeg');
+          mediaInfo.streamType = chrome.cast.media.StreamType.LIVE;
           const request = new chrome.cast.media.LoadRequest(mediaInfo);
-          session.loadMedia(request);
+          request.autoplay = true;
+          await session.loadMedia(request);
+          // Pause local audio since Chromecast is now playing
+          audio.pause();
+          audio.src = '';
+          setState(false);
+          status.textContent = 'Playing on TV';
         }
-      } catch(e) { console.log('Cast cancelled', e); }
+      } catch(e) {
+        console.log('Cast cancelled or failed', e);
+        status.textContent = '';
+      }
     });
   };
 
