@@ -46,7 +46,7 @@
       align-items: center;
       justify-content: center;
       padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
-      transition: opacity 0.8s ease;
+      transition: opacity 1.5s ease;
     }
 
     #intro.hidden {
@@ -542,24 +542,28 @@
   const stageLanding = document.getElementById('stageLanding');
 
   document.getElementById('enterBtn').addEventListener('click', () => {
-    // Fade out the logo/button
-    stageLanding.style.transition = 'opacity 0.5s';
+    // Fade out the logo/button slowly
+    stageLanding.style.transition = 'opacity 1.2s ease';
     stageLanding.style.opacity = '0';
 
-    // Fade in video
-    introVideo.style.opacity = '1';
-    introVideo.play();
-    introAudio.play();
-
-    // After 4 seconds fade to player
+    // Fade in video smoothly
     setTimeout(() => {
+      introVideo.style.transition = 'opacity 1.2s ease';
+      introVideo.style.opacity = '1';
+      introVideo.play();
+      introAudio.play();
+    }, 600);
+
+    // After 4 seconds fade to player slowly
+    setTimeout(() => {
+      intro.style.transition = 'opacity 1.5s ease';
       intro.classList.add('hidden');
       document.getElementById('player').classList.add('visible');
       setTimeout(() => {
         intro.style.display = 'none';
         introVideo.pause();
         introAudio.pause();
-      }, 900);
+      }, 1500);
     }, 4000);
   });
 
