@@ -2,54 +2,703 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Forge iPhone AirPlay Proof Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>The Forge Radio</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="The Forge Radio" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="forge-icon.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="forge-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="forge-icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    body {
-      margin: 0;
-      padding: 32px 20px;
-      background: #111;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      text-align: center;
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --fire:  #FF6B00;
+      --amber: #FFB300;
+      --ember: #CC2200;
+      --text:  #F2EDE4;
+      --muted: #777;
+      --tab-h: 58px;
     }
-    .wrap {
-      max-width: 520px;
-      margin: 0 auto;
+
+    html, body {
+      height: 100%;
+      background: #000;
+      font-family: 'Rajdhani', sans-serif;
+      overflow: hidden;
     }
-    h1 {
-      font-size: 1.6rem;
-      margin-bottom: 12px;
+
+    /* =====================
+       INTRO SCREEN
+    ===================== */
+    #intro {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+      transition: opacity 0.8s ease;
     }
-    p {
-      line-height: 1.5;
-      color: #ddd;
-      margin-bottom: 18px;
+
+    #intro.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
-    audio {
+
+    /* MP4 video - full screen behind logo */
+    #introVideo {
+      position: absolute;
+      inset: 0;
       width: 100%;
-      margin: 20px 0;
+      height: 100%;
+      object-fit: cover;
+      opacity: 1;
+      transition: opacity 0.8s ease;
     }
-    .note {
-      font-size: 0.95rem;
-      color: #bbb;
+
+    #introVideo.fadeout { opacity: 0; }
+
+    /* Logo and button sit above video */
+    .intro-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.8s ease;
     }
+
+    .intro-content.visible { opacity: 1; }
+
+    .landing-logo {
+      width: 88%;
+      max-width: 360px;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 0 30px rgba(255,107,0,0.5));
+      animation: logoPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes logoPulse {
+      0%,100% { filter: drop-shadow(0 0 30px rgba(255,107,0,0.4)); }
+      50%      { filter: drop-shadow(0 0 55px rgba(255,180,0,0.7)); }
+    }
+
+    .enter-btn {
+      margin-top: 48px;
+      padding: 16px 44px;
+      border: none;
+      border-radius: 3px;
+      background: linear-gradient(135deg, #FF8C00, #B81A00);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 0.18em;
+      color: #fff;
+      cursor: pointer;
+      box-shadow:
+        0 0 0 1px rgba(255,107,0,0.5),
+        0 0 24px rgba(255,107,0,0.5),
+        0 0 60px rgba(255,107,0,0.2);
+      transition: transform 0.12s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .enter-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,200,100,0.2), transparent);
+      pointer-events: none;
+    }
+
+    .enter-btn:active { transform: scale(0.96); }
+
+    /* =====================
+       PLAYER
+    ===================== */
+    #player {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      max-width: 480px;
+      margin: 0 auto;
+      padding-top: env(safe-area-inset-top);
+      background: url('playerBG.png') center calc(env(safe-area-inset-top) + 20px) / cover no-repeat;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    #player.visible { opacity: 1; }
+
+    #player::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1.5px solid rgba(255,107,0,0.5);
+      border-bottom: none;
+      border-radius: 10px 10px 0 0;
+      background: transparent;
+      box-shadow: 0 0 30px rgba(255,107,0,0.15);
+      position: relative;
+      z-index: 1;
+    }
+
+    .panels {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .panel {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      padding: 220px 24px 16px;
+    }
+
+    #panel-listen {
+      padding-top: 220px;
+    }
+
+    .panel.active { opacity: 1; pointer-events: auto; }
+
+    /* Cast row */
+    .cast-row {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 14px 0 4px;
+    }
+
+    .cast-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+    }
+
+    .cast-btn:hover { opacity: 1; }
+    .cast-btn svg { width: 22px; height: 22px; fill: rgba(200,220,255,0.8); }
+
+    /* LISTEN TAB */
+    .listen-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding-top: 0;
+    }
+
+    .station-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.6rem;
+      letter-spacing: 0.1em;
+      line-height: 1;
+      color: var(--text);
+      text-shadow: 0 0 24px rgba(255,107,0,0.6), 0 2px 8px rgba(0,0,0,0.8);
+      margin-bottom: 2px;
+    }
+
+    .station-sub {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 16px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid rgba(255,107,0,0.45);
+      background: rgba(0,0,0,0.45);
+      border-radius: 3px;
+      padding: 4px 12px 4px 9px;
+      margin-bottom: 20px;
+    }
+
+    .live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--fire);
+      box-shadow: 0 0 8px var(--fire);
+      animation: dotPulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes dotPulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.75); }
+    }
+
+    .live-label {
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.22em; color: var(--fire); text-transform: uppercase;
+    }
+
+    .play-btn {
+      width: 84px; height: 84px;
+      border-radius: 50%; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      background: radial-gradient(circle at 38% 32%, #FF8C00, #B81A00);
+      box-shadow: 0 0 0 1px rgba(255,107,0,0.55), 0 0 22px rgba(255,107,0,0.6), 0 0 55px rgba(255,107,0,0.25), inset 0 1px 0 rgba(255,200,100,0.35);
+      transition: transform 0.14s ease;
+      position: relative;
+    }
+
+    .play-btn:hover { transform: scale(1.07); }
+    .play-btn:active { transform: scale(0.96); }
+    .play-btn svg { width: 32px; height: 32px; fill: #fff; filter: drop-shadow(0 1px 4px rgba(0,0,0,0.6)); }
+    .play-btn.idle svg { margin-left: 4px; }
+    .play-btn.playing::after {
+      content: ''; position: absolute; inset: -10px; border-radius: 50%;
+      border: 2px solid rgba(255,107,0,0.5);
+      animation: ringExpand 2s ease-out infinite;
+    }
+
+    @keyframes ringExpand {
+      0% { opacity: 0.7; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.5); }
+    }
+
+    .audio-bars {
+      display: flex; align-items: flex-end; justify-content: center;
+      gap: 4px; height: 20px; margin-bottom: 12px;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .audio-bars.active { opacity: 1; }
+    .bar {
+      width: 4px; border-radius: 2px;
+      background: linear-gradient(to top, var(--ember), var(--amber));
+      box-shadow: 0 0 5px var(--fire);
+      animation: barBounce var(--spd) ease-in-out var(--dly) infinite alternate;
+    }
+    @keyframes barBounce {
+      from { height: 4px; opacity: 0.5; }
+      to { height: 18px; opacity: 1; }
+    }
+
+    .np-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
+    .np-track { font-size: 1rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; height: 1.45em; text-shadow: 0 1px 6px rgba(0,0,0,0.9); }
+    .np-inner { display: inline-block; white-space: nowrap; }
+    .status { font-size: 0.72rem; color: rgba(255,255,255,0.45); min-height: 1.2em; margin-top: 8px; }
+    .divider { width: 40px; height: 1px; background: linear-gradient(90deg, transparent, var(--fire), transparent); margin: 12px auto; opacity: 0.4; }
+    .site-link { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em; color: rgba(255,107,0,0.55); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+    .site-link:hover { color: var(--fire); }
+
+    /* SHARED TAB STYLES */
+    .tab-heading { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.08em; color: var(--text); margin-bottom: 14px; text-shadow: 0 2px 8px rgba(0,0,0,0.9); }
+    .tab-body-text { font-size: 0.85rem; color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 16px; }
+
+    /* NEWS */
+    .news-item { border-left: 2px solid var(--fire); padding: 8px 10px 8px 14px; margin-bottom: 16px; background: rgba(0,0,0,0.3); border-radius: 0 4px 4px 0; }
+    .news-date { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fire); margin-bottom: 3px; }
+    .news-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 4px; line-height: 1.3; }
+    .news-body { font-size: 0.82rem; color: rgba(255,255,255,0.65); line-height: 1.5; }
+    .news-link { display: inline-block; margin-top: 5px; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fire); text-decoration: none; }
+
+    /* REQUEST */
+    .req-field { margin-bottom: 12px; }
+    .req-label { display: block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fire); margin-bottom: 5px; }
+    .req-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,107,0,0.3); border-radius: 4px; padding: 10px 12px; font-family: 'Rajdhani', sans-serif; font-size: 0.95rem; font-weight: 500; color: var(--text); outline: none; transition: border-color 0.2s; }
+    .req-input:focus { border-color: rgba(255,107,0,0.8); }
+    .req-input::placeholder { color: #555; }
+    .req-btn { width: 100%; margin-top: 6px; padding: 13px; border: none; border-radius: 4px; background: linear-gradient(135deg, #FF6B00, #B81A00); font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.12em; color: #fff; cursor: pointer; box-shadow: 0 0 18px rgba(255,107,0,0.35); transition: transform 0.12s; }
+    .req-btn:active { transform: scale(0.98); }
+    .req-confirm { display: none; text-align: center; padding: 20px 0; font-size: 1rem; color: var(--amber); font-weight: 600; text-shadow: 0 0 12px rgba(255,180,0,0.5); }
+
+    /* SHOWS */
+    .show-item { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,107,0,0.15); border-radius: 5px; padding: 12px 14px; margin-bottom: 12px; }
+    .show-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 0.08em; color: var(--text); margin-bottom: 2px; }
+    .show-time { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--fire); margin-bottom: 5px; }
+    .show-desc { font-size: 0.8rem; color: rgba(255,255,255,0.6); line-height: 1.5; }
+
+    /* PARTNERS */
+    .partner-item { background: rgba(0,0,0,0.45); border: 1px solid rgba(255,107,0,0.15); border-radius: 6px; padding: 16px; margin-bottom: 14px; text-align: center; }
+    .partner-logo { max-width: 200px; max-height: 80px; width: auto; height: auto; object-fit: contain; display: block; margin: 0 auto 10px; }
+    .partner-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.08em; color: var(--text); margin-bottom: 5px; }
+    .partner-desc { font-size: 0.78rem; color: rgba(255,255,255,0.6); line-height: 1.5; margin-bottom: 8px; }
+    .partner-link { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fire); text-decoration: none; }
+
+    /* TAB BAR */
+    .tab-bar { height: var(--tab-h); background: rgba(8,6,4,0.92); border-top: 1px solid rgba(255,107,0,0.2); display: flex; flex-shrink: 0; position: relative; z-index: 1; }
+    .tab-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; background: none; border: none; cursor: pointer; padding: 6px 2px; }
+    .tab-btn svg { width: 19px; height: 19px; fill: var(--muted); transition: fill 0.15s; }
+    .tab-btn span { font-family: 'Rajdhani', sans-serif; font-size: 0.52rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); transition: color 0.15s; }
+    .tab-btn.active svg { fill: var(--fire); }
+    .tab-btn.active span { color: var(--fire); }
   </style>
+  <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Forge iPhone AirPlay Proof Test</h1>
-    <p>Tap play on the audio player below. Then use the iPhone AirPlay picker to send it to your TV.</p>
 
-    <audio
-      controls
-      preload="auto"
-      playsinline
-      x-webkit-airplay="allow"
-      src="https://streaming.live365.com/a31364">
-    </audio>
-
-    <p class="note">If this still spins after choosing the TV, the issue is the stream handoff from iPhone web playback to AirPlay, not your custom app code.</p>
+<!-- INTRO SCREEN -->
+<div id="intro">
+  <video id="introVideo" autoplay muted playsinline>
+    <source src="TheForgeIntro.mp4" type="video/mp4">
+  </video>
+  <div class="intro-content" id="introContent">
+    <img class="landing-logo" src="Logo.png" alt="The Forge Christian Radio" />
+    <button class="enter-btn" id="enterBtn">Enter The Forge</button>
   </div>
+</div>
+
+<!-- PLAYER -->
+<div id="player">
+  <div class="glow-wrap">
+    <div class="panels">
+
+      <!-- LISTEN -->
+      <div class="panel active" id="panel-listen">
+        <div class="listen-inner">
+          <div class="station-name">THE FORGE</div>
+          <div class="station-sub">Christian Radio</div>
+          <div class="live-badge">
+            <div class="live-dot"></div>
+            <span class="live-label">Live Stream</span>
+          </div>
+          <button class="play-btn idle" id="playBtn" aria-label="Play / Pause">
+            <svg viewBox="0 0 24 24" id="btnIcon"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <div class="audio-bars" id="bars">
+            <div class="bar" style="--spd:.55s;--dly:0s"></div>
+            <div class="bar" style="--spd:.80s;--dly:.10s"></div>
+            <div class="bar" style="--spd:.60s;--dly:.20s"></div>
+            <div class="bar" style="--spd:.90s;--dly:.05s"></div>
+            <div class="bar" style="--spd:.70s;--dly:.15s"></div>
+          </div>
+          <div class="np-label">Now Playing</div>
+          <div class="np-track"><span class="np-inner" id="npInner">Tap play to listen</span></div>
+          <div class="status" id="status"></div>
+          <div class="divider"></div>
+          <a class="site-link" href="https://www.theforgeradio.org" target="_blank" rel="noopener">theforgeradio.org</a>
+          <div class="cast-row">
+            <button class="cast-btn" id="airplayBtn" title="AirPlay" style="display:none">
+              <svg viewBox="0 0 24 24"><path d="M6 22h12l-6-6-6 6zM21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4v-2H3V5h18v12h-4v2h4c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+            </button>
+            <button class="cast-btn" id="castBtn" title="Cast to TV">
+              <svg viewBox="0 0 24 24"><path d="M1 18v3h3c0-1.66-1.34-3-3-3zm0-4v2c2.76 0 5 2.24 5 5h2c0-3.87-3.13-7-7-7zm0-4v2c4.97 0 9 4.03 9 9h2c0-6.08-4.93-11-11-11zm20-7H3c-1.1 0-2 .9-2 2v3h2V5h18v14h-7v2h7c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEWS -->
+      <div class="panel" id="panel-news">
+        <div class="tab-heading">News &amp; Updates</div>
+        <div class="news-item">
+          <div class="news-date">Coming Soon</div>
+          <div class="news-title">News &amp; Events Coming Soon</div>
+          <div class="news-body">Check back here for the latest updates, events, and announcements from The Forge Christian Radio.</div>
+          <a class="news-link" href="https://www.theforgeradio.org" target="_blank" rel="noopener">Visit our site &rarr;</a>
+        </div>
+        <div class="news-item">
+          <div class="news-date">Stay Connected</div>
+          <div class="news-title">Follow Us on Facebook</div>
+          <div class="news-body">Get real-time updates, behind the scenes content, and connect with the Forge community.</div>
+          <a class="news-link" href="https://www.facebook.com/forgeinternetradio/" target="_blank" rel="noopener">facebook.com/forgeinternetradio &rarr;</a>
+        </div>
+      </div>
+
+      <!-- REQUEST -->
+      <div class="panel" id="panel-request">
+        <div class="tab-heading">Request a Song</div>
+        <div class="tab-body-text">Got a song on your heart? Send us your request and we'll do our best to get it on the air.</div>
+        <div id="reqForm">
+          <div class="req-field">
+            <label class="req-label" for="reqName">Your Name</label>
+            <input class="req-input" type="text" id="reqName" placeholder="First name" />
+          </div>
+          <div class="req-field">
+            <label class="req-label" for="reqSong">Song Title</label>
+            <input class="req-input" type="text" id="reqSong" placeholder="Song title" />
+          </div>
+          <div class="req-field">
+            <label class="req-label" for="reqArtist">Artist</label>
+            <input class="req-input" type="text" id="reqArtist" placeholder="Artist name" />
+          </div>
+          <div class="req-field">
+            <label class="req-label" for="reqNote">Note (optional)</label>
+            <input class="req-input" type="text" id="reqNote" placeholder="Dedication or message" />
+          </div>
+          <button class="req-btn" id="reqSubmit">Submit Request</button>
+        </div>
+        <div class="req-confirm" id="reqConfirm">Your request has been sent!<br>God bless you.</div>
+      </div>
+
+      <!-- SHOWS -->
+      <div class="panel" id="panel-shows">
+        <div class="tab-heading">Shows &amp; Events</div>
+        <div class="tab-body-text">Show schedule and events coming soon. Check back for updates.</div>
+        <div class="show-item">
+          <div class="show-name">Coming Soon</div>
+          <div class="show-time">Schedule Being Updated</div>
+          <div class="show-desc">Full show listings and event details will be added here shortly.</div>
+        </div>
+        <div class="show-item">
+          <div class="show-name">Stay Tuned</div>
+          <div class="show-time">On Air Now</div>
+          <div class="show-desc">Hit the Listen tab and tune in live while the schedule is being finalized.</div>
+        </div>
+      </div>
+
+      <!-- PARTNERS -->
+      <div class="panel" id="panel-partners">
+        <div class="tab-heading">Our Partners</div>
+        <div class="tab-body-text">We love our partners who help us stay on the air and get the message out.</div>
+        <div class="partner-item">
+          <img class="partner-logo" src="https://primary.jwwb.nl/public/t/p/i/temp-opjgvzhfvplwbkmudlqi/fmc-logo-high.jpg" alt="Favored Marketing Consultants" onerror="this.style.display='none'" />
+          <div class="partner-name">Favored Marketing Consultants</div>
+          <div class="partner-desc">Connecting you to your community through expert social media management and brand development in Springfield, Missouri.</div>
+          <a class="partner-link" href="https://favoredmarketingconsultants.com" target="_blank" rel="noopener">favoredmarketingconsultants.com &rarr;</a>
+        </div>
+        <div class="partner-item">
+          <img class="partner-logo" src="https://primary.jwwb.nl/public/t/p/i/temp-opjgvzhfvplwbkmudlqi/sandbox-d-labs-high.png" alt="Sandbox'd Labs" onerror="this.style.display='none'" />
+          <div class="partner-name">Sandbox'd Labs</div>
+          <div class="partner-desc">Springfield, MO web design for small businesses built on integrity. A veteran-owned studio focused on clean, fast websites that actually work.</div>
+          <a class="partner-link" href="https://www.sandboxdlabs.com" target="_blank" rel="noopener">sandboxdlabs.com &rarr;</a>
+        </div>
+        <div class="partner-item">
+          <img class="partner-logo" src="https://primary.jwwb.nl/public/t/p/i/temp-opjgvzhfvplwbkmudlqi/safehaven-now-high.jpg" alt="SafeHaven Now" onerror="this.style.display='none'" />
+          <div class="partner-name">SafeHaven Now</div>
+          <div class="partner-desc">Food Pantry and Thrift Store serving the Rogersville and Fordland community since 2019. Providing essential resources to those in need through love and service.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="listen">
+      <svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+      <span>Listen</span>
+    </button>
+    <button class="tab-btn" data-tab="news">
+      <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>
+      <span>News</span>
+    </button>
+    <button class="tab-btn" data-tab="request">
+      <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+      <span>Request</span>
+    </button>
+    <button class="tab-btn" data-tab="shows">
+      <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+      <span>Shows</span>
+    </button>
+    <button class="tab-btn" data-tab="partners">
+      <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+      <span>Partners</span>
+    </button>
+  </div>
+</div>
+
+
+
+<audio id="audio" preload="auto" playsinline x-webkit-airplay="allow"></audio>
+
+<script>
+  // ---- Intro: video plays, fades at 3s, logo/button appear ----
+  const introVideo   = document.getElementById('introVideo');
+  const introContent = document.getElementById('introContent');
+  const intro        = document.getElementById('intro');
+
+  // Show logo/button after 3 seconds, fade video out
+  setTimeout(() => {
+    introVideo.classList.add('fadeout');
+    introContent.classList.add('visible');
+  }, 3000);
+
+  // ---- Enter button: fade to player ----
+  document.getElementById('enterBtn').addEventListener('click', () => {
+    intro.classList.add('hidden');
+    document.getElementById('player').classList.add('visible');
+    // Stop video to free resources
+    introVideo.pause();
+    introVideo.src = '';
+    // Remove intro from DOM after transition completes
+    setTimeout(() => { intro.style.display = 'none'; }, 900);
+  });
+
+  // ---- Tab switching ----
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.dataset.tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + tab).classList.add('active');
+    });
+  });
+
+  // ---- Song request via Formspree ----
+  document.getElementById('reqSubmit').addEventListener('click', async () => {
+    const name   = document.getElementById('reqName').value.trim();
+    const song   = document.getElementById('reqSong').value.trim();
+    const artist = document.getElementById('reqArtist').value.trim();
+    const note   = document.getElementById('reqNote').value.trim();
+    if (!song) { alert('Please enter a song title.'); return; }
+
+    const submitBtn = document.getElementById('reqSubmit');
+    submitBtn.textContent = 'Sending...';
+    submitBtn.disabled = true;
+
+    try {
+      const res = await fetch('https://formspree.io/f/mjgjrkjj', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ name: name || 'Anonymous', song, artist, note })
+      });
+
+      if (res.ok) {
+        document.getElementById('reqForm').style.display = 'none';
+        document.getElementById('reqConfirm').style.display = 'block';
+        setTimeout(() => {
+          document.getElementById('reqForm').style.display = 'block';
+          document.getElementById('reqConfirm').style.display = 'none';
+          ['reqName','reqSong','reqArtist','reqNote'].forEach(id => document.getElementById(id).value = '');
+          submitBtn.textContent = 'Submit Request';
+          submitBtn.disabled = false;
+        }, 4000);
+      } else {
+        alert('Something went wrong. Please try again.');
+        submitBtn.textContent = 'Submit Request';
+        submitBtn.disabled = false;
+      }
+    } catch {
+      alert('Something went wrong. Please try again.');
+      submitBtn.textContent = 'Submit Request';
+      submitBtn.disabled = false;
+    }
+  });
+
+  // ---- Audio player ----
+  const STREAM = 'https://streaming.live365.com/a31364';
+  const audio  = document.getElementById('audio');
+  audio.src = STREAM;
+  const btn    = document.getElementById('playBtn');
+  const icon   = document.getElementById('btnIcon');
+  const bars   = document.getElementById('bars');
+  const status = document.getElementById('status');
+  const PLAY_PATH  = '<path d="M8 5v14l11-7z"/>';
+  const PAUSE_PATH = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+  let playing = false;
+
+  function setState(on) {
+    playing = on;
+    icon.innerHTML = on ? PAUSE_PATH : PLAY_PATH;
+    btn.classList.toggle('playing', on);
+    btn.classList.toggle('idle', !on);
+    bars.classList.toggle('active', on);
+  }
+
+  btn.addEventListener('click', () => {
+    if (!playing) {
+      audio.src = STREAM;
+      audio.play().catch(() => { status.textContent = 'Playback blocked. Tap again.'; setState(false); audio.src = ''; });
+      setState(true);
+      status.textContent = 'Connecting...';
+    } else {
+      audio.pause(); audio.src = ''; setState(false); status.textContent = '';
+    }
+  });
+
+  audio.addEventListener('playing', () => {
+    status.textContent = '';
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: 'The Forge Christian Radio',
+        artist: 'Live Stream',
+        album: 'theforgeradio.org',
+        artwork: [
+          { src: 'forge-icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'forge-icon.png',     sizes: '512x512', type: 'image/png' }
+        ]
+      });
+      navigator.mediaSession.playbackState = 'playing';
+      navigator.mediaSession.setActionHandler('play',  () => { audio.play(); setState(true); });
+      navigator.mediaSession.setActionHandler('pause', () => { audio.pause(); audio.src = ''; setState(false); });
+      navigator.mediaSession.setActionHandler('stop',  () => { audio.pause(); audio.src = ''; setState(false); });
+    }
+  });
+  audio.addEventListener('waiting', () => { status.textContent = 'Buffering...'; });
+  audio.addEventListener('error',   () => { status.textContent = 'Stream error. Try again.'; setState(false); audio.src = ''; });
+
+  // ---- Chromecast ----
+  let castSession = null;
+
+  window['__onGCastApiAvailable'] = function(isAvailable) {
+    if (!isAvailable) return;
+    const context = cast.framework.CastContext.getInstance();
+    context.setOptions({
+      receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+      autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+    });
+  };
+
+  function playOnTV() {
+    if (!castSession) return;
+    const mediaInfo = new chrome.cast.media.MediaInfo(STREAM, 'audio/mpeg');
+    mediaInfo.streamType = chrome.cast.media.StreamType.LIVE;
+    const request = new chrome.cast.media.LoadRequest(mediaInfo);
+    request.autoplay = true;
+    castSession.loadMedia(request)
+      .then(() => { audio.pause(); audio.src = ''; setState(false); status.textContent = 'Playing on TV'; })
+      .catch(err => console.log('Cast error:', err));
+  }
+
+  document.getElementById('castBtn').addEventListener('click', () => {
+    const context = cast.framework.CastContext.getInstance();
+    context.requestSession().then(() => {
+      castSession = context.getCurrentSession();
+      playOnTV();
+    }).catch(err => console.log('Cast session error:', err));
+  });
+
+  // ---- AirPlay (iOS) ----
+  const airplayBtn = document.getElementById('airplayBtn');
+  if (window.WebKitPlaybackTargetAvailabilityEvent) {
+    audio.addEventListener('webkitplaybacktargetavailabilitychanged', (e) => {
+      airplayBtn.style.display = e.availability === 'available' ? 'block' : 'none';
+    });
+    airplayBtn.addEventListener('click', async () => {
+      try {
+        await audio.play();
+        audio.webkitShowPlaybackTargetPicker();
+      } catch(e) { console.log('AirPlay error:', e); }
+    });
+  }
+</script>
 </body>
 </html>
