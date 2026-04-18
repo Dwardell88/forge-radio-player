@@ -143,7 +143,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: rgba(0,0,0,0.45);
+      background: rgba(0,0,0,0.25);
       pointer-events: none;
       z-index: 0;
     }
@@ -157,7 +157,7 @@
       border-bottom: none;
       border-radius: 10px 10px 0 0;
       background:
-        linear-gradient(rgba(5,8,18,0.55), rgba(5,8,18,0.55)) padding-box,
+        linear-gradient(rgba(5,8,18,0.15), rgba(5,8,18,0.15)) padding-box,
         linear-gradient(135deg, var(--fire), var(--ember), var(--amber), var(--fire)) border-box;
       background-size: auto, 300% 300%;
       animation: borderShift 5s ease infinite;
@@ -530,6 +530,8 @@
     const landing = document.getElementById('landing');
     const player  = document.getElementById('player');
 
+    // Force reflow before animation so it triggers reliably
+    void burn.offsetWidth;
     burn.classList.add('active');
     setTimeout(() => { player.classList.add('visible'); }, 750);
     setTimeout(() => { landing.classList.add('burning'); }, 600);
