@@ -554,17 +554,17 @@
       introAudio.play();
     }, 600);
 
-    // Fade audio out at 3 seconds
+    // Fade audio out over 1 second starting at 9 seconds
     setTimeout(() => {
       let vol = 1;
       const fadeOut = setInterval(() => {
-        vol = Math.max(0, vol - 0.1);
+        vol = Math.max(0, vol - 0.05);
         introAudio.volume = vol;
         if (vol <= 0) clearInterval(fadeOut);
       }, 50);
-    }, 3000);
+    }, 9000);
 
-    // Fade to player at 3.5 seconds
+    // Fade to player at 11.5 seconds (after full 10s + 1.5s fade)
     setTimeout(() => {
       intro.classList.add('hidden');
       document.getElementById('player').classList.add('visible');
@@ -574,7 +574,7 @@
         introAudio.pause();
         introAudio.volume = 1;
       }, 1500);
-    }, 3500);
+    }, 11500);
   });
 
   // ---- Tab switching ----
