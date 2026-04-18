@@ -215,7 +215,7 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      padding-top: 220px;
+      padding-top: 40px;
     }
 
     .station-name {
@@ -360,7 +360,6 @@
     .tab-btn.active svg { fill: var(--fire); }
     .tab-btn.active span { color: var(--fire); }
   </style>
-  <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
 </head>
 <body>
 
@@ -389,29 +388,13 @@
             <div class="live-dot"></div>
             <span class="live-label">Live Stream</span>
           </div>
-          <button class="play-btn idle" id="playBtn" aria-label="Play / Pause">
-            <svg viewBox="0 0 24 24" id="btnIcon"><path d="M8 5v14l11-7z"/></svg>
-          </button>
-          <div class="audio-bars" id="bars">
-            <div class="bar" style="--spd:.55s;--dly:0s"></div>
-            <div class="bar" style="--spd:.80s;--dly:.10s"></div>
-            <div class="bar" style="--spd:.60s;--dly:.20s"></div>
-            <div class="bar" style="--spd:.90s;--dly:.05s"></div>
-            <div class="bar" style="--spd:.70s;--dly:.15s"></div>
-          </div>
-          <div class="np-label">Now Playing</div>
-          <div class="np-track"><span class="np-inner" id="npInner">Tap play to listen</span></div>
-          <div class="status" id="status"></div>
-          <div class="divider"></div>
-          <a class="site-link" href="https://www.theforgeradio.org" target="_blank" rel="noopener">theforgeradio.org</a>
-          <div class="cast-row">
-            <button class="cast-btn" id="airplayBtn" title="AirPlay" style="display:none">
-              <svg viewBox="0 0 24 24"><path d="M6 22h12l-6-6-6 6zM21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4v-2H3V5h18v12h-4v2h4c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
-            </button>
-            <button class="cast-btn" id="castBtn" title="Cast to TV">
-              <svg viewBox="0 0 24 24"><path d="M1 18v3h3c0-1.66-1.34-3-3-3zm0-4v2c2.76 0 5 2.24 5 5h2c0-3.87-3.13-7-7-7zm0-4v2c4.97 0 9 4.03 9 9h2c0-6.08-4.93-11-11-11zm20-7H3c-1.1 0-2 .9-2 2v3h2V5h18v14h-7v2h7c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
-            </button>
-          </div>
+          <iframe
+            src="https://live365.com/embeds/v1/player/a31364?s=md&m=dark&c=mp3"
+            frameborder="0"
+            style="width:100%; max-width:450px; height:316px; border-radius:6px;"
+            allowfullscreen
+            allow="autoplay"
+          ></iframe>
         </div>
       </div>
 
@@ -524,7 +507,7 @@
   </div>
 </div>
 
-<audio id="audio" preload="none"></audio>
+
 
 <script>
   // ---- Intro: video plays, fades at 3s, logo/button appear ----
@@ -559,58 +542,6 @@
       document.getElementById('panel-' + tab).classList.add('active');
     });
   });
-
-  // ---- Audio player ----
-  const STREAM = 'https://streaming.live365.com/a31364';
-  const audio  = document.getElementById('audio');
-  const btn    = document.getElementById('playBtn');
-  const icon   = document.getElementById('btnIcon');
-  const bars   = document.getElementById('bars');
-  const status = document.getElementById('status');
-  const PLAY_PATH  = '<path d="M8 5v14l11-7z"/>';
-  const PAUSE_PATH = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
-  let playing = false;
-
-  function setState(on) {
-    playing = on;
-    icon.innerHTML = on ? PAUSE_PATH : PLAY_PATH;
-    btn.classList.toggle('playing', on);
-    btn.classList.toggle('idle', !on);
-    bars.classList.toggle('active', on);
-  }
-
-  btn.addEventListener('click', () => {
-    if (!playing) {
-      audio.src = STREAM;
-      audio.play().catch(() => { status.textContent = 'Playback blocked. Tap again.'; setState(false); audio.src = ''; });
-      setState(true);
-      status.textContent = 'Connecting...';
-    } else {
-      audio.pause(); audio.src = ''; setState(false); status.textContent = '';
-    }
-  });
-
-  audio.addEventListener('playing', () => {
-    status.textContent = '';
-    // Media Session API - tells OS this is real castable media
-    if ('mediaSession' in navigator) {
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: 'The Forge Christian Radio',
-        artist: 'Live Stream',
-        album: 'theforgeradio.org',
-        artwork: [
-          { src: 'forge-icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'forge-icon.png',     sizes: '512x512', type: 'image/png' }
-        ]
-      });
-      navigator.mediaSession.playbackState = 'playing';
-      navigator.mediaSession.setActionHandler('play',  () => { audio.play(); setState(true); });
-      navigator.mediaSession.setActionHandler('pause', () => { audio.pause(); audio.src = ''; setState(false); });
-      navigator.mediaSession.setActionHandler('stop',  () => { audio.pause(); audio.src = ''; setState(false); });
-    }
-  });
-  audio.addEventListener('waiting', () => { status.textContent = 'Buffering...'; });
-  audio.addEventListener('error',   () => { status.textContent = 'Stream error. Try again.'; setState(false); audio.src = ''; });
 
   // ---- Song request via Formspree ----
   document.getElementById('reqSubmit').addEventListener('click', async () => {
@@ -652,47 +583,6 @@
       submitBtn.disabled = false;
     }
   });
-
-  // ---- Chromecast ----
-  window['__onGCastApiAvailable'] = function(isAvailable) {
-    if (!isAvailable) return;
-    const castBtn = document.getElementById('castBtn');
-    const context = cast.framework.CastContext.getInstance();
-    context.setOptions({
-      receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
-      autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
-    });
-    castBtn.addEventListener('click', async () => {
-      try {
-        await context.requestSession();
-        const session = context.getCurrentSession();
-        if (session) {
-          const mediaInfo = new chrome.cast.media.MediaInfo(STREAM, 'audio/mpeg');
-          mediaInfo.streamType = chrome.cast.media.StreamType.LIVE;
-          const request = new chrome.cast.media.LoadRequest(mediaInfo);
-          request.autoplay = true;
-          await session.loadMedia(request);
-          // Pause local audio since Chromecast is now playing
-          audio.pause();
-          audio.src = '';
-          setState(false);
-          status.textContent = 'Playing on TV';
-        }
-      } catch(e) {
-        console.log('Cast cancelled or failed', e);
-        status.textContent = '';
-      }
-    });
-  };
-
-  // ---- AirPlay (iOS Safari) ----
-  const airplayBtn = document.getElementById('airplayBtn');
-  if (window.WebKitPlaybackTargetAvailabilityEvent) {
-    audio.addEventListener('webkitplaybacktargetavailabilitychanged', (e) => {
-      airplayBtn.style.display = e.availability === 'available' ? 'block' : 'none';
-    });
-    airplayBtn.addEventListener('click', () => { audio.webkitShowPlaybackTargetPicker(); });
-  }
 </script>
 </body>
 </html>
