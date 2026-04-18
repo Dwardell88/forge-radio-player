@@ -97,26 +97,14 @@
     .enter-btn:active { transform: scale(0.96); }
 
     /* =====================
-       BURN OVERLAY
+       FIRE SWIPE CANVAS
     ===================== */
     #burn {
       position: fixed;
       inset: 0;
       z-index: 99;
       pointer-events: none;
-      opacity: 0;
-    }
-
-    #burn.active {
-      animation: burnExpand 0.9s ease-out forwards;
-    }
-
-    @keyframes burnExpand {
-      0%   { opacity: 0; background: radial-gradient(circle at 50% 55%, #FFD700 0%, #FF6B00 5%, #CC2200 12%, transparent 15%); }
-      15%  { opacity: 1; background: radial-gradient(circle at 50% 55%, #FFF 0%, #FFD700 4%, #FF6B00 12%, #CC2200 22%, transparent 28%); }
-      40%  { opacity: 1; background: radial-gradient(circle at 50% 55%, #FFD700 0%, #FF8C00 15%, #CC2200 35%, #440000 55%, transparent 70%); }
-      70%  { opacity: 0.85; background: radial-gradient(circle at 50% 55%, #FF6B00 0%, #CC2200 30%, #1a0500 60%, transparent 85%); }
-      100% { opacity: 0; background: radial-gradient(circle at 50% 55%, #CC2200 0%, #0a0300 40%, transparent 100%); }
+      display: none;
     }
 
     /* =====================
@@ -153,15 +141,11 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      border: 1.5px solid transparent;
+      border: 1.5px solid rgba(255,107,0,0.5);
       border-bottom: none;
       border-radius: 10px 10px 0 0;
-      background:
-        linear-gradient(rgba(5,8,18,0.15), rgba(5,8,18,0.15)) padding-box,
-        linear-gradient(135deg, var(--fire), var(--ember), var(--amber), var(--fire)) border-box;
-      background-size: auto, 300% 300%;
-      animation: borderShift 5s ease infinite;
-      box-shadow: 0 0 40px rgba(255,107,0,0.15);
+      background: transparent;
+      box-shadow: 0 0 30px rgba(255,107,0,0.2), inset 0 0 30px rgba(0,0,0,0.15);
       position: relative;
       z-index: 1;
     }
@@ -373,8 +357,8 @@
   <button class="enter-btn" id="enterBtn">Enter The Forge</button>
 </div>
 
-<!-- BURN OVERLAY -->
-<div id="burn"></div>
+<!-- FIRE SWIPE CANVAS -->
+<canvas id="burn"></canvas>
 
 <!-- PLAYER -->
 <div id="player">
@@ -526,16 +510,96 @@
 <script>
   // ---- Burn transition ----
   document.getElementById('enterBtn').addEventListener('click', () => {
-    const burn    = document.getElementById('burn');
+    const canvas  = document.getElementById('burn');
     const landing = document.getElementById('landing');
     const player  = document.getElementById('player');
+    const ctx     = canvas.getContext('2d');
 
-    // Force reflow before animation so it triggers reliably
-    void burn.offsetWidth;
-    burn.classList.add('active');
-    setTimeout(() => { player.classList.add('visible'); }, 750);
-    setTimeout(() => { landing.classList.add('burning'); }, 600);
-    setTimeout(() => { landing.style.display = 'none'; burn.style.display = 'none'; }, 1400);
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.display = 'block';
+
+    const W = canvas.width;
+    const H = canvas.height;
+    const DURATION = 1100; // ms total swipe
+    let start = null;
+
+    // Noise helper for jagged flame edge
+    function noise(x, t) {
+      return (
+        Math.sin(x * 0.04 + t * 3.1) * 28 +
+        Math.sin(x * 0.09 + t * 5.7) * 16 +
+        Math.sin(x * 0.2  + t * 8.3) * 9  +
+        Math.sin(x * 0.5  + t * 12)  * 5
+      );
+    }
+
+    function draw(ts) {
+      if (!start) start = ts;
+      const elapsed = ts - start;
+      const progress = Math.min(elapsed / DURATION, 1);
+
+      // easeInOut
+      const ease = progress < 0.5
+        ? 2 * progress * progress
+        : -1 + (4 - 2 * progress) * progress;
+
+      ctx.clearRect(0, 0, W, H);
+
+      const sweepX = ease * (W + 120) - 60; // leading edge x position
+
+      // Fill everything left of sweepX solid dark
+      ctx.fillStyle = '#050200';
+      ctx.fillRect(0, 0, sweepX, H);
+
+      // Draw jagged fire edge
+      const t = elapsed / 1000;
+      const edgeWidth = 90;
+
+      for (let y = 0; y < H; y += 2) {
+        const flicker = noise(y, t);
+        const ex = sweepX + flicker;
+
+        // Fire gradient at edge - hot white core to deep red
+        const grad = ctx.createLinearGradient(ex - edgeWidth, y, ex + 30, y);
+        grad.addColorStop(0,    'rgba(5,2,0,0)');
+        grad.addColorStop(0.3,  'rgba(140,20,0,0.6)');
+        grad.addColorStop(0.6,  'rgba(255,80,0,0.95)');
+        grad.addColorStop(0.78, 'rgba(255,180,0,1)');
+        grad.addColorStop(0.88, 'rgba(255,240,180,1)');
+        grad.addColorStop(1,    'rgba(255,255,255,0.9)');
+
+        ctx.fillStyle = grad;
+        ctx.fillRect(ex - edgeWidth, y, edgeWidth + 30, 2);
+      }
+
+      // Glow bloom on leading edge
+      const glow = ctx.createLinearGradient(sweepX - 40, 0, sweepX + 60, 0);
+      glow.addColorStop(0,   'rgba(255,100,0,0)');
+      glow.addColorStop(0.4, 'rgba(255,140,0,0.18)');
+      glow.addColorStop(0.7, 'rgba(255,200,50,0.35)');
+      glow.addColorStop(1,   'rgba(255,255,200,0)');
+      ctx.fillStyle = glow;
+      ctx.fillRect(sweepX - 40, 0, 100, H);
+
+      // Reveal player partway through
+      if (progress > 0.35 && !player.classList.contains('visible')) {
+        player.classList.add('visible');
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(draw);
+      } else {
+        // Done — hide canvas and landing
+        canvas.style.display = 'none';
+        landing.style.display = 'none';
+      }
+    }
+
+    // Fade out landing page slightly before swipe completes
+    setTimeout(() => { landing.style.opacity = '0'; }, 600);
+
+    requestAnimationFrame(draw);
   });
 
   // ---- Tab switching ----
@@ -591,7 +655,7 @@
     const note   = document.getElementById('reqNote').value.trim();
     if (!song) { alert('Please enter a song title.'); return; }
     const body = `Name: ${name || 'Anonymous'}\nSong: ${song}\nArtist: ${artist}\nNote: ${note}`;
-    window.location.href = `mailto:requests@theforgeradio.org?subject=Song Request&body=${encodeURIComponent(body)}`;
+    window.location.href = `mailto:info@theforgeradio.org?subject=Song Request&body=${encodeURIComponent(body)}`;
     document.getElementById('reqForm').style.display = 'none';
     document.getElementById('reqConfirm').style.display = 'block';
     setTimeout(() => {
