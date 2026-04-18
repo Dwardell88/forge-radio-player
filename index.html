@@ -21,7 +21,6 @@
       --fire:  #FF6B00;
       --amber: #FFB300;
       --ember: #CC2200;
-      --bg:    #070707;
       --text:  #F2EDE4;
       --muted: #777;
       --tab-h: 58px;
@@ -35,35 +34,64 @@
     }
 
     /* =====================
-       LANDING PAGE
+       INTRO SCREEN
     ===================== */
-    #landing {
+    #intro {
       position: fixed;
       inset: 0;
       z-index: 100;
+      background: #000;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: #060504;
       padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
-      transition: opacity 0.5s ease 0.6s;
+      transition: opacity 0.8s ease;
     }
 
-    #landing.burning { opacity: 0; pointer-events: none; }
+    #intro.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* MP4 video - full screen behind logo */
+    #introVideo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 1;
+      transition: opacity 0.8s ease;
+    }
+
+    #introVideo.fadeout { opacity: 0; }
+
+    /* Logo and button sit above video */
+    .intro-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    .intro-content.visible { opacity: 1; }
 
     .landing-logo {
       width: 88%;
       max-width: 360px;
       height: auto;
       display: block;
-      filter: drop-shadow(0 0 30px rgba(255,107,0,0.4));
+      filter: drop-shadow(0 0 30px rgba(255,107,0,0.5));
       animation: logoPulse 3s ease-in-out infinite;
     }
 
     @keyframes logoPulse {
       0%,100% { filter: drop-shadow(0 0 30px rgba(255,107,0,0.4)); }
-      50%      { filter: drop-shadow(0 0 50px rgba(255,180,0,0.65)); }
+      50%      { filter: drop-shadow(0 0 55px rgba(255,180,0,0.7)); }
     }
 
     .enter-btn {
@@ -81,7 +109,7 @@
         0 0 0 1px rgba(255,107,0,0.5),
         0 0 24px rgba(255,107,0,0.5),
         0 0 60px rgba(255,107,0,0.2);
-      transition: transform 0.12s, box-shadow 0.12s;
+      transition: transform 0.12s;
       position: relative;
       overflow: hidden;
     }
@@ -97,34 +125,7 @@
     .enter-btn:active { transform: scale(0.96); }
 
     /* =====================
-       FIRE SWIPE CANVAS
-    ===================== */
-    #burn {
-      position: fixed;
-      inset: 0;
-      z-index: 99;
-      pointer-events: none;
-      display: none;
-    }
-
-    /* Full screen background */
-    #playerBg {
-      position: fixed;
-      inset: 0;
-      z-index: 5;
-      background: url('playerBG.png') center center / cover no-repeat;
-      display: none;
-    }
-
-    #playerBg::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.25);
-    }
-
-    /* =====================
-       PLAYER APP
+       PLAYER
     ===================== */
     #player {
       position: fixed;
@@ -135,11 +136,21 @@
       max-width: 480px;
       margin: 0 auto;
       padding-top: env(safe-area-inset-top);
+      background: url('playerBG.png') center top / cover no-repeat;
       opacity: 0;
-      transition: opacity 0.4s ease;
+      transition: opacity 0.8s ease;
     }
 
     #player.visible { opacity: 1; }
+
+    #player::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      pointer-events: none;
+      z-index: 0;
+    }
 
     .glow-wrap {
       flex: 1;
@@ -150,14 +161,9 @@
       border-bottom: none;
       border-radius: 10px 10px 0 0;
       background: transparent;
-      box-shadow: 0 0 30px rgba(255,107,0,0.2), inset 0 0 30px rgba(0,0,0,0.15);
+      box-shadow: 0 0 30px rgba(255,107,0,0.15);
       position: relative;
       z-index: 1;
-    }
-
-    @keyframes borderShift {
-      0%,100% { background-position: auto, 0% 50%; }
-      50%      { background-position: auto, 100% 50%; }
     }
 
     .panels {
@@ -243,12 +249,8 @@
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 20px;
       background: radial-gradient(circle at 38% 32%, #FF8C00, #B81A00);
-      box-shadow:
-        0 0 0 1px rgba(255,107,0,0.55),
-        0 0 22px rgba(255,107,0,0.6),
-        0 0 55px rgba(255,107,0,0.25),
-        inset 0 1px 0 rgba(255,200,100,0.35);
-      transition: transform 0.14s ease, box-shadow 0.14s ease;
+      box-shadow: 0 0 0 1px rgba(255,107,0,0.55), 0 0 22px rgba(255,107,0,0.6), 0 0 55px rgba(255,107,0,0.25), inset 0 1px 0 rgba(255,200,100,0.35);
+      transition: transform 0.14s ease;
       position: relative;
     }
 
@@ -284,15 +286,8 @@
       to { height: 18px; opacity: 1; }
     }
 
-    .np-label {
-      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.22em;
-      text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 4px;
-    }
-    .np-track {
-      font-size: 1rem; font-weight: 600; color: var(--text);
-      white-space: nowrap; overflow: hidden; height: 1.45em;
-      text-shadow: 0 1px 6px rgba(0,0,0,0.9);
-    }
+    .np-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
+    .np-track { font-size: 1rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; height: 1.45em; text-shadow: 0 1px 6px rgba(0,0,0,0.9); }
     .np-inner { display: inline-block; white-space: nowrap; }
     .status { font-size: 0.72rem; color: rgba(255,255,255,0.45); min-height: 1.2em; margin-top: 8px; }
     .divider { width: 40px; height: 1px; background: linear-gradient(90deg, transparent, var(--fire), transparent); margin: 12px auto; opacity: 0.4; }
@@ -300,22 +295,17 @@
     .site-link:hover { color: var(--fire); }
 
     /* SHARED TAB STYLES */
-    .tab-heading {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.8rem; letter-spacing: 0.08em;
-      color: var(--text); margin-bottom: 14px;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.9);
-    }
+    .tab-heading { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.08em; color: var(--text); margin-bottom: 14px; text-shadow: 0 2px 8px rgba(0,0,0,0.9); }
     .tab-body-text { font-size: 0.85rem; color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 16px; }
 
-    /* NEWS TAB */
-    .news-item { border-left: 2px solid var(--fire); padding: 8px 0 8px 14px; margin-bottom: 16px; background: rgba(0,0,0,0.3); border-radius: 0 4px 4px 0; padding-right: 10px; }
+    /* NEWS */
+    .news-item { border-left: 2px solid var(--fire); padding: 8px 10px 8px 14px; margin-bottom: 16px; background: rgba(0,0,0,0.3); border-radius: 0 4px 4px 0; }
     .news-date { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fire); margin-bottom: 3px; }
     .news-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 4px; line-height: 1.3; }
     .news-body { font-size: 0.82rem; color: rgba(255,255,255,0.65); line-height: 1.5; }
     .news-link { display: inline-block; margin-top: 5px; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fire); text-decoration: none; }
 
-    /* REQUEST TAB */
+    /* REQUEST */
     .req-field { margin-bottom: 12px; }
     .req-label { display: block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fire); margin-bottom: 5px; }
     .req-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,107,0,0.3); border-radius: 4px; padding: 10px 12px; font-family: 'Rajdhani', sans-serif; font-size: 0.95rem; font-weight: 500; color: var(--text); outline: none; transition: border-color 0.2s; }
@@ -325,29 +315,21 @@
     .req-btn:active { transform: scale(0.98); }
     .req-confirm { display: none; text-align: center; padding: 20px 0; font-size: 1rem; color: var(--amber); font-weight: 600; text-shadow: 0 0 12px rgba(255,180,0,0.5); }
 
-    /* SHOWS TAB */
+    /* SHOWS */
     .show-item { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,107,0,0.15); border-radius: 5px; padding: 12px 14px; margin-bottom: 12px; }
     .show-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 0.08em; color: var(--text); margin-bottom: 2px; }
     .show-time { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--fire); margin-bottom: 5px; }
     .show-desc { font-size: 0.8rem; color: rgba(255,255,255,0.6); line-height: 1.5; }
 
-    /* PARTNERS TAB */
+    /* PARTNERS */
     .partner-item { background: rgba(0,0,0,0.45); border: 1px solid rgba(255,107,0,0.15); border-radius: 6px; padding: 16px; margin-bottom: 14px; text-align: center; }
-    .partner-logo { max-width: 200px; max-height: 80px; width: auto; height: auto; object-fit: contain; display: block; margin: 0 auto 10px; filter: brightness(1.1); }
+    .partner-logo { max-width: 200px; max-height: 80px; width: auto; height: auto; object-fit: contain; display: block; margin: 0 auto 10px; }
     .partner-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.08em; color: var(--text); margin-bottom: 5px; }
     .partner-desc { font-size: 0.78rem; color: rgba(255,255,255,0.6); line-height: 1.5; margin-bottom: 8px; }
     .partner-link { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fire); text-decoration: none; }
 
     /* TAB BAR */
-    .tab-bar {
-      height: var(--tab-h);
-      background: rgba(8,6,4,0.92);
-      border-top: 1px solid rgba(255,107,0,0.2);
-      display: flex;
-      flex-shrink: 0;
-      position: relative;
-      z-index: 1;
-    }
+    .tab-bar { height: var(--tab-h); background: rgba(8,6,4,0.92); border-top: 1px solid rgba(255,107,0,0.2); display: flex; flex-shrink: 0; position: relative; z-index: 1; }
     .tab-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; background: none; border: none; cursor: pointer; padding: 6px 2px; }
     .tab-btn svg { width: 19px; height: 19px; fill: var(--muted); transition: fill 0.15s; }
     .tab-btn span { font-family: 'Rajdhani', sans-serif; font-size: 0.52rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); transition: color 0.15s; }
@@ -357,17 +339,16 @@
 </head>
 <body>
 
-<!-- LANDING PAGE -->
-<div id="landing">
-  <img class="landing-logo" src="Logo.png" alt="The Forge Christian Radio" />
-  <button class="enter-btn" id="enterBtn">Enter The Forge</button>
+<!-- INTRO SCREEN -->
+<div id="intro">
+  <video id="introVideo" autoplay muted playsinline>
+    <source src="FlameEmbers.mp4" type="video/mp4">
+  </video>
+  <div class="intro-content" id="introContent">
+    <img class="landing-logo" src="Logo.png" alt="The Forge Christian Radio" />
+    <button class="enter-btn" id="enterBtn">Enter The Forge</button>
+  </div>
 </div>
-
-<!-- FIRE SWIPE CANVAS -->
-<canvas id="burn"></canvas>
-
-<!-- PLAYER BACKGROUND -->
-<div id="playerBg"></div>
 
 <!-- PLAYER -->
 <div id="player">
@@ -464,31 +445,27 @@
       <div class="panel" id="panel-partners">
         <div class="tab-heading">Our Partners</div>
         <div class="tab-body-text">We love our partners who help us stay on the air and get the message out.</div>
-
         <div class="partner-item">
           <img class="partner-logo" src="https://primary.jwwb.nl/public/t/p/i/temp-opjgvzhfvplwbkmudlqi/fmc-logo-high.jpg" alt="Favored Marketing Consultants" onerror="this.style.display='none'" />
           <div class="partner-name">Favored Marketing Consultants</div>
           <div class="partner-desc">Connecting you to your community through expert social media management and brand development in Springfield, Missouri.</div>
           <a class="partner-link" href="https://favoredmarketingconsultants.com" target="_blank" rel="noopener">favoredmarketingconsultants.com &rarr;</a>
         </div>
-
         <div class="partner-item">
           <img class="partner-logo" src="https://primary.jwwb.nl/public/t/p/i/temp-opjgvzhfvplwbkmudlqi/sandbox-d-labs-high.png" alt="Sandbox'd Labs" onerror="this.style.display='none'" />
           <div class="partner-name">Sandbox'd Labs</div>
           <div class="partner-desc">Springfield, MO web design for small businesses built on integrity. A veteran-owned studio focused on clean, fast websites that actually work.</div>
           <a class="partner-link" href="https://www.sandboxdlabs.com" target="_blank" rel="noopener">sandboxdlabs.com &rarr;</a>
         </div>
-
         <div class="partner-item">
           <img class="partner-logo" src="https://primary.jwwb.nl/public/t/p/i/temp-opjgvzhfvplwbkmudlqi/safehaven-now-high.jpg" alt="SafeHaven Now" onerror="this.style.display='none'" />
           <div class="partner-name">SafeHaven Now</div>
           <div class="partner-desc">Food Pantry and Thrift Store serving the Rogersville and Fordland community since 2019. Providing essential resources to those in need through love and service.</div>
         </div>
-
       </div>
 
-    </div><!-- /panels -->
-  </div><!-- /glow-wrap -->
+    </div>
+  </div>
 
   <div class="tab-bar">
     <button class="tab-btn active" data-tab="listen">
@@ -512,112 +489,31 @@
       <span>Partners</span>
     </button>
   </div>
-</div><!-- /player -->
+</div>
 
 <audio id="audio" preload="none"></audio>
 
 <script>
-  // ---- Burn transition ----
+  // ---- Intro: video plays, fades at 3s, logo/button appear ----
+  const introVideo   = document.getElementById('introVideo');
+  const introContent = document.getElementById('introContent');
+  const intro        = document.getElementById('intro');
+
+  // Show logo/button after 3 seconds, fade video out
+  setTimeout(() => {
+    introVideo.classList.add('fadeout');
+    introContent.classList.add('visible');
+  }, 3000);
+
+  // ---- Enter button: fade to player ----
   document.getElementById('enterBtn').addEventListener('click', () => {
-    const canvas  = document.getElementById('burn');
-    const landing = document.getElementById('landing');
-    const player  = document.getElementById('player');
-    const ctx     = canvas.getContext('2d');
-
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-    canvas.style.display = 'block';
-
-    // Fallback — show player even if canvas fails
-    setTimeout(() => {
-      document.getElementById('playerBg').style.display = 'block';
-      player.classList.add('visible');
-      landing.style.display = 'none';
-      canvas.style.display = 'none';
-    }, 1500);
-
-    const W = canvas.width;
-    const H = canvas.height;
-    const DURATION = 1100; // ms total swipe
-    let start = null;
-
-    // Noise helper for jagged flame edge
-    function noise(x, t) {
-      return (
-        Math.sin(x * 0.04 + t * 3.1) * 28 +
-        Math.sin(x * 0.09 + t * 5.7) * 16 +
-        Math.sin(x * 0.2  + t * 8.3) * 9  +
-        Math.sin(x * 0.5  + t * 12)  * 5
-      );
-    }
-
-    function draw(ts) {
-      if (!start) start = ts;
-      const elapsed = ts - start;
-      const progress = Math.min(elapsed / DURATION, 1);
-
-      // easeInOut
-      const ease = progress < 0.5
-        ? 2 * progress * progress
-        : -1 + (4 - 2 * progress) * progress;
-
-      ctx.clearRect(0, 0, W, H);
-
-      const sweepX = ease * (W + 120) - 60; // leading edge x position
-
-      // Fill everything left of sweepX solid dark
-      ctx.fillStyle = '#050200';
-      ctx.fillRect(0, 0, sweepX, H);
-
-      // Draw jagged fire edge
-      const t = elapsed / 1000;
-      const edgeWidth = 90;
-
-      for (let y = 0; y < H; y += 2) {
-        const flicker = noise(y, t);
-        const ex = sweepX + flicker;
-
-        // Fire gradient at edge - hot white core to deep red
-        const grad = ctx.createLinearGradient(ex - edgeWidth, y, ex + 30, y);
-        grad.addColorStop(0,    'rgba(5,2,0,0)');
-        grad.addColorStop(0.3,  'rgba(140,20,0,0.6)');
-        grad.addColorStop(0.6,  'rgba(255,80,0,0.95)');
-        grad.addColorStop(0.78, 'rgba(255,180,0,1)');
-        grad.addColorStop(0.88, 'rgba(255,240,180,1)');
-        grad.addColorStop(1,    'rgba(255,255,255,0.9)');
-
-        ctx.fillStyle = grad;
-        ctx.fillRect(ex - edgeWidth, y, edgeWidth + 30, 2);
-      }
-
-      // Glow bloom on leading edge
-      const glow = ctx.createLinearGradient(sweepX - 40, 0, sweepX + 60, 0);
-      glow.addColorStop(0,   'rgba(255,100,0,0)');
-      glow.addColorStop(0.4, 'rgba(255,140,0,0.18)');
-      glow.addColorStop(0.7, 'rgba(255,200,50,0.35)');
-      glow.addColorStop(1,   'rgba(255,255,200,0)');
-      ctx.fillStyle = glow;
-      ctx.fillRect(sweepX - 40, 0, 100, H);
-
-      // Reveal player partway through
-      if (progress > 0.35 && !player.classList.contains('visible')) {
-        document.getElementById('playerBg').style.display = 'block';
-        player.classList.add('visible');
-      }
-
-      if (progress < 1) {
-        requestAnimationFrame(draw);
-      } else {
-        // Done — hide canvas and landing
-        canvas.style.display = 'none';
-        landing.style.display = 'none';
-      }
-    }
-
-    // Fade out landing page slightly before swipe completes
-    setTimeout(() => { landing.style.opacity = '0'; }, 600);
-
-    requestAnimationFrame(draw);
+    intro.classList.add('hidden');
+    document.getElementById('player').classList.add('visible');
+    // Stop video to free resources
+    introVideo.pause();
+    introVideo.src = '';
+    // Remove intro from DOM after transition completes
+    setTimeout(() => { intro.style.display = 'none'; }, 900);
   });
 
   // ---- Tab switching ----
@@ -631,7 +527,7 @@
     });
   });
 
-  // ---- Player ----
+  // ---- Audio player ----
   const STREAM = 'https://streaming.live365.com/a31364';
   const audio  = document.getElementById('audio');
   const btn    = document.getElementById('playBtn');
@@ -665,22 +561,45 @@
   audio.addEventListener('waiting', () => { status.textContent = 'Buffering...'; });
   audio.addEventListener('error',   () => { status.textContent = 'Stream error. Try again.'; setState(false); audio.src = ''; });
 
-  // ---- Song request ----
-  document.getElementById('reqSubmit').addEventListener('click', () => {
+  // ---- Song request via Formspree ----
+  document.getElementById('reqSubmit').addEventListener('click', async () => {
     const name   = document.getElementById('reqName').value.trim();
     const song   = document.getElementById('reqSong').value.trim();
     const artist = document.getElementById('reqArtist').value.trim();
     const note   = document.getElementById('reqNote').value.trim();
     if (!song) { alert('Please enter a song title.'); return; }
-    const body = `Name: ${name || 'Anonymous'}\nSong: ${song}\nArtist: ${artist}\nNote: ${note}`;
-    window.location.href = `mailto:info@theforgeradio.org?subject=Song Request&body=${encodeURIComponent(body)}`;
-    document.getElementById('reqForm').style.display = 'none';
-    document.getElementById('reqConfirm').style.display = 'block';
-    setTimeout(() => {
-      document.getElementById('reqForm').style.display = 'block';
-      document.getElementById('reqConfirm').style.display = 'none';
-      ['reqName','reqSong','reqArtist','reqNote'].forEach(id => document.getElementById(id).value = '');
-    }, 4000);
+
+    const submitBtn = document.getElementById('reqSubmit');
+    submitBtn.textContent = 'Sending...';
+    submitBtn.disabled = true;
+
+    try {
+      const res = await fetch('https://formspree.io/f/mjgjrkjj', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ name: name || 'Anonymous', song, artist, note })
+      });
+
+      if (res.ok) {
+        document.getElementById('reqForm').style.display = 'none';
+        document.getElementById('reqConfirm').style.display = 'block';
+        setTimeout(() => {
+          document.getElementById('reqForm').style.display = 'block';
+          document.getElementById('reqConfirm').style.display = 'none';
+          ['reqName','reqSong','reqArtist','reqNote'].forEach(id => document.getElementById(id).value = '');
+          submitBtn.textContent = 'Submit Request';
+          submitBtn.disabled = false;
+        }, 4000);
+      } else {
+        alert('Something went wrong. Please try again.');
+        submitBtn.textContent = 'Submit Request';
+        submitBtn.disabled = false;
+      }
+    } catch {
+      alert('Something went wrong. Please try again.');
+      submitBtn.textContent = 'Submit Request';
+      submitBtn.disabled = false;
+    }
   });
 </script>
 </body>
