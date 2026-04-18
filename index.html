@@ -107,6 +107,22 @@
       display: none;
     }
 
+    /* Full screen background */
+    #playerBg {
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      background: url('playerBG.png') center center / cover no-repeat;
+      display: none;
+    }
+
+    #playerBg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.25);
+    }
+
     /* =====================
        PLAYER APP
     ===================== */
@@ -119,22 +135,11 @@
       max-width: 480px;
       margin: 0 auto;
       padding-top: env(safe-area-inset-top);
-      background: url('playerBG.png') center center / cover no-repeat;
       opacity: 0;
-      transition: opacity 0.4s ease 0.75s;
+      transition: opacity 0.4s ease;
     }
 
     #player.visible { opacity: 1; }
-
-    /* dark overlay on player bg for readability */
-    #player::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.25);
-      pointer-events: none;
-      z-index: 0;
-    }
 
     .glow-wrap {
       flex: 1;
@@ -180,6 +185,7 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
+      padding-top: 120px;
     }
 
     .station-name {
@@ -360,6 +366,9 @@
 <!-- FIRE SWIPE CANVAS -->
 <canvas id="burn"></canvas>
 
+<!-- PLAYER BACKGROUND -->
+<div id="playerBg"></div>
+
 <!-- PLAYER -->
 <div id="player">
   <div class="glow-wrap">
@@ -519,6 +528,14 @@
     canvas.height = window.innerHeight;
     canvas.style.display = 'block';
 
+    // Fallback — show player even if canvas fails
+    setTimeout(() => {
+      document.getElementById('playerBg').style.display = 'block';
+      player.classList.add('visible');
+      landing.style.display = 'none';
+      canvas.style.display = 'none';
+    }, 1500);
+
     const W = canvas.width;
     const H = canvas.height;
     const DURATION = 1100; // ms total swipe
@@ -584,6 +601,7 @@
 
       // Reveal player partway through
       if (progress > 0.35 && !player.classList.contains('visible')) {
+        document.getElementById('playerBg').style.display = 'block';
         player.classList.add('visible');
       }
 
