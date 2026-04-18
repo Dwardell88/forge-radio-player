@@ -372,6 +372,7 @@
   <div class="intro-content" id="introContent">
     <img class="landing-logo" src="Logo.png" alt="The Forge Christian Radio" />
     <button class="enter-btn" id="enterBtn">Enter The Forge</button>
+    <div style="margin-top:12px;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.72);text-shadow:0 1px 4px rgba(0,0,0,0.8);">Tap to hear the intro</div>
   </div>
 </div>
 
@@ -538,21 +539,64 @@
   const introContent = document.getElementById('introContent');
   const intro        = document.getElementById('intro');
 
-  // Show logo/button after 3 seconds, fade video out
+  // Show logo/button after 3 seconds.
+  // Keep the video visible so the user can tap and hear the intro with sound.
   setTimeout(() => {
-    introVideo.classList.add('fadeout');
     introContent.classList.add('visible');
   }, 3000);
 
-  // ---- Enter button: fade to player ----
-  document.getElementById('enterBtn').addEventListener('click', () => {
+  const enterBtn = document.getElementById('enterBtn');
+  let introEntering = false;
+
+  function enterApp() {
     intro.classList.add('hidden');
     document.getElementById('player').classList.add('visible');
-    // Stop video to free resources
     introVideo.pause();
-    introVideo.src = '';
-    // Remove intro from DOM after transition completes
+    introVideo.removeAttribute('src');
+    introVideo.load();
     setTimeout(() => { intro.style.display = 'none'; }, 900);
+  }
+
+  // ---- Enter button: use the user's tap to allow intro sound, then enter app ----
+  enterBtn.addEventListener('click', async () => {
+    if (introEntering) {
+      enterApp();
+      return;
+    }
+
+    introEntering = true;
+    enterBtn.textContent = 'Entering...';
+
+    try {
+      const remaining = (introVideo.duration || 0) - (introVideo.currentTime || 0);
+      if (introVideo.ended || remaining < 1.25) {
+        introVideo.currentTime = 0;
+      }
+
+      introVideo.muted = false;
+      introVideo.volume = 1;
+      await introVideo.play();
+
+      const finishIntro = () => {
+        introVideo.removeEventListener('ended', finishIntro);
+        enterApp();
+      };
+      introVideo.addEventListener('ended', finishIntro);
+
+      const fallbackDelay = Math.max(
+        1200,
+        Math.min(5000, ((introVideo.duration || 0) - (introVideo.currentTime || 0)) * 1000)
+      );
+
+      setTimeout(() => {
+        if (document.getElementById('intro').style.display !== 'none') {
+          enterApp();
+        }
+      }, fallbackDelay + 150);
+    } catch (err) {
+      console.log('Intro audio failed, entering app without intro sound.', err);
+      enterApp();
+    }
   });
 
   // ---- Tab switching ----
