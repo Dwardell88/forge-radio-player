@@ -1,107 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Forge Debug Cast Test</title>
-<script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
-</head>
-<body style="background:#111;color:#fff;font-family:sans-serif;text-align:center;padding:40px;">
-
-<h2>Forge Debug Cast Test</h2>
-
-<p id="status">Status: Waiting...</p>
-
-<button onclick="startCasting()">Start Cast</button>
-<button id="airplayBtn" style="display:none;">AirPlay</button>
-
-<audio id="audio" preload="auto" playsinline x-webkit-airplay="allow"></audio>
-
-<script>
-const STREAM = "https://streaming.live365.com/a31364";
-const status = document.getElementById('status');
-const audio = document.getElementById('audio');
-const airplayBtn = document.getElementById('airplayBtn');
-
-audio.src = STREAM;
-
-// ---- AIRPLAY DEBUG ----
-if ('WebKitPlaybackTargetAvailabilityEvent' in window) {
-  status.innerText = "Status: AirPlay API detected";
-
-  audio.addEventListener('webkitplaybacktargetavailabilitychanged', (e) => {
-    status.innerText = "AirPlay availability: " + e.availability;
-    airplayBtn.style.display = e.availability === 'available' ? 'inline-block' : 'none';
-  });
-
-  airplayBtn.addEventListener('click', async () => {
-    try {
-      status.innerText = "Trying AirPlay...";
-      await audio.play();
-      audio.webkitShowPlaybackTargetPicker();
-    } catch (e) {
-      status.innerText = "AirPlay error: " + e;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forge iPhone AirPlay Proof Test</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 32px 20px;
+      background: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
     }
-  });
-} else {
-  status.innerText = "Status: AirPlay NOT supported";
-}
+    .wrap {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 12px;
+    }
+    p {
+      line-height: 1.5;
+      color: #ddd;
+      margin-bottom: 18px;
+    }
+    audio {
+      width: 100%;
+      margin: 20px 0;
+    }
+    .note {
+      font-size: 0.95rem;
+      color: #bbb;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Forge iPhone AirPlay Proof Test</h1>
+    <p>Tap play on the audio player below. Then use the iPhone AirPlay picker to send it to your TV.</p>
 
-// ---- CAST DEBUG ----
-let castSession = null;
+    <audio
+      controls
+      preload="auto"
+      playsinline
+      x-webkit-airplay="allow"
+      src="https://streaming.live365.com/a31364">
+    </audio>
 
-window.__onGCastApiAvailable = function(isAvailable) {
-  if (!isAvailable) {
-    status.innerText = "Cast API not available";
-    return;
-  }
-
-  status.innerText = "Cast API Loaded";
-
-  const context = cast.framework.CastContext.getInstance();
-  context.setOptions({
-    receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
-    autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
-  });
-};
-
-function startCasting() {
-  const context = cast.framework.CastContext.getInstance();
-
-  status.innerText = "Requesting Cast session...";
-
-  context.requestSession().then(() => {
-    castSession = context.getCurrentSession();
-    status.innerText = "Cast session started";
-    playOnTV();
-  }).catch(err => {
-    status.innerText = "Session error: " + err;
-  });
-}
-
-function playOnTV() {
-  if (!castSession) {
-    status.innerText = "No cast session";
-    return;
-  }
-
-  status.innerText = "Loading media...";
-
-  const mediaInfo = new chrome.cast.media.MediaInfo(STREAM, 'audio/mpeg');
-  mediaInfo.streamType = chrome.cast.media.StreamType.LIVE;
-
-  const request = new chrome.cast.media.LoadRequest(mediaInfo);
-  request.autoplay = true;
-
-  castSession.loadMedia(request)
-    .then(() => {
-      status.innerText = "Casting started successfully";
-    })
-    .catch(err => {
-      status.innerText = "Media load error: " + err;
-    });
-}
-</script>
-
+    <p class="note">If this still spins after choosing the TV, the issue is the stream handoff from iPhone web playback to AirPlay, not your custom app code.</p>
+  </div>
 </body>
 </html>
