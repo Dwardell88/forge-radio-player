@@ -336,10 +336,12 @@
     .req-confirm { display: none; text-align: center; padding: 20px 0; font-size: 1rem; color: var(--amber); font-weight: 600; text-shadow: 0 0 12px rgba(255,180,0,0.5); }
 
     /* SHOWS */
-    .show-item { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,107,0,0.15); border-radius: 5px; padding: 12px 14px; margin-bottom: 12px; }
-    .show-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 0.08em; color: var(--text); margin-bottom: 2px; }
-    .show-time { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--fire); margin-bottom: 5px; }
-    .show-desc { font-size: 0.8rem; color: rgba(255,255,255,0.6); line-height: 1.5; }
+    .show-item { background: rgba(0,0,0,0.4); border: 1px solid rgba(240,184,36,0.15); border-radius: 5px; margin-bottom: 16px; overflow: hidden; }
+    .show-img { width: 100%; height: auto; display: block; }
+    .show-body { padding: 10px 14px 12px; }
+    .show-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 0.08em; color: var(--fire); margin-bottom: 4px; }
+    .show-time { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--amber); margin-bottom: 5px; }
+    .show-desc { font-size: 0.8rem; color: var(--fire); line-height: 1.5; opacity: 0.85; }
 
     /* PARTNERS */
     .partner-item { background: rgba(0,0,0,0.45); border: 1px solid rgba(255,107,0,0.15); border-radius: 6px; padding: 16px; margin-bottom: 14px; text-align: center; }
@@ -382,8 +384,8 @@
             <div class="live-dot"></div>
             <span class="live-label">Live Stream</span>
           </div>
-          <button class="play-btn idle" id="playBtn" aria-label="Play / Pause">
-            <svg viewBox="0 0 24 24" id="btnIcon"><path d="M8 5v14l11-7z"/></svg>
+          <button class="play-btn idle" id="playBtn" aria-label="Play / Pause" style="background:none;border:none;box-shadow:none;width:100px;height:100px;cursor:pointer;padding:0;">
+            <img id="btnIcon" src="New_Button.png" alt="Play" style="width:100px;height:100px;object-fit:contain;filter:drop-shadow(0 0 14px rgba(240,184,36,0.6));" />
           </button>
           <div class="audio-bars" id="bars">
             <div class="bar" style="--spd:.55s;--dly:0s"></div>
@@ -420,6 +422,11 @@
         <div class="news-item">
           <div class="news-date">Stay Connected</div>
           <div class="news-title">Follow Us on Facebook</div>
+          <div style="text-align:center;margin:10px 0;">
+            <a href="https://www.facebook.com/forgeinternetradio/" target="_blank" rel="noopener">
+              <img src="FB_Logo.png" alt="Facebook" style="width:60px;height:60px;object-fit:contain;" />
+            </a>
+          </div>
           <div class="news-body">Get real-time updates, behind the scenes content, and connect with the Forge community.</div>
           <a class="news-link" href="https://www.facebook.com/forgeinternetradio/" target="_blank" rel="noopener">facebook.com/forgeinternetradio &rarr;</a>
         </div>
@@ -456,28 +463,43 @@
         <div class="tab-heading">Shows &amp; Events</div>
 
         <div class="show-item">
-          <div class="show-name">20 The Countdown Magazine</div>
-          <div class="show-desc">William Ryan III counts down the Top 20 Christian songs every week in this 2-hour magazine-style show — the longest-running Christian music countdown in the world.</div>
+          <div class="show-body">
+            <div class="show-time" style="text-align:center;">Every Friday Night @ 5pm</div>
+            <div class="show-name">20 The Countdown Magazine</div>
+            <div class="show-desc">William Ryan III counts down the Top 20 Christian songs every week in this 2-hour magazine-style show — the longest-running Christian music countdown in the world.</div>
+          </div>
         </div>
 
         <div class="show-item">
-          <div class="show-name">The Rest of the Story</div>
-          <div class="show-desc">True stories, largely forgotten, based on a variety of subjects with a key element held back until the end.</div>
+          <div class="show-body">
+            <div class="show-time" style="text-align:center;">Every Sunday @ 5pm</div>
+            <div class="show-name">Paul Harvey's The Rest of the Story</div>
+            <div class="show-desc">True stories, largely forgotten, based on a variety of subjects with a key element held back until the end.</div>
+          </div>
         </div>
 
         <div class="show-item">
-          <div class="show-name">Faith, Hope and Inspiration</div>
-          <div class="show-desc">Hosted by Chuck Shorter. Contemporary Christian songs, traditional hymns, and uplifting music with a positive message — honoring the Word through music for a spiritual revival.</div>
+          <div class="show-body">
+            <div class="show-time" style="text-align:center;">Every Sunday @ 6pm</div>
+            <div class="show-name">Faith, Hope and Inspiration</div>
+            <div class="show-desc">Hosted by Chuck Shorter. Contemporary Christian songs, traditional hymns, and uplifting music with a positive message — honoring the Word through music for a spiritual revival.</div>
+          </div>
         </div>
 
         <div class="show-item">
-          <div class="show-name">Christian Music Rewind</div>
-          <div class="show-desc">Your trip back in time to the greatest Christian hits from the past. The songs you grew up on, the songs that strengthened your faith, and the songs that still matter today.</div>
+          <div class="show-body">
+            <div class="show-time" style="text-align:center;">Every Saturday Night @ 7pm</div>
+            <div class="show-name">Christian Music Rewind</div>
+            <div class="show-desc">Your trip back in time to the greatest Christian hits from the past. The songs you grew up on, the songs that strengthened your faith, and the songs that still matter today.</div>
+          </div>
         </div>
 
         <div class="show-item">
-          <div class="show-name">Christian Music Spotlight</div>
-          <div class="show-desc">Hosted by Brian David. A Spin Award winning Contemporary Christian Music show featuring new music, a verbal Top 5 countdown, two 60-second devotionals, and songs you won't hear anywhere else.</div>
+          <div class="show-body">
+            <div class="show-time" style="text-align:center;">Every Monday @ 6pm</div>
+            <div class="show-name">Christian Music Spotlight</div>
+            <div class="show-desc">Hosted by Brian David. A Spin Award winning Contemporary Christian Music show featuring new music, a verbal Top 5 countdown, two 60-second devotionals, and songs you won't hear anywhere else.</div>
+          </div>
         </div>
 
       </div>
@@ -506,6 +528,10 @@
       </div>
 
     </div>
+  </div>
+
+  <div style="text-align:center;padding:5px;background:rgba(0,0,0,0.6);position:relative;z-index:1;">
+    <span style="font-size:0.55rem;color:rgba(255,255,255,0.35);letter-spacing:0.05em;">&copy; 2025 - 2026 The FORGE Internet Radio</span>
   </div>
 
   <div class="tab-bar">
@@ -619,7 +645,6 @@
 
   function setState(on) {
     playing = on;
-    icon.innerHTML = on ? PAUSE_PATH : PLAY_PATH;
     btn.classList.toggle('playing', on);
     btn.classList.toggle('idle', !on);
     bars.classList.toggle('active', on);
