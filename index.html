@@ -408,17 +408,11 @@
           <div class="divider"></div>
           <a class="site-link" href="https://www.theforgeradio.org" target="_blank" rel="noopener">theforgeradio.org</a>
           <div class="cast-row">
-            <button class="cast-btn" id="airplayBtn" title="AirPlay" style="display:none">
-              <svg viewBox="0 0 24 24"><path d="M6 22h12l-6-6-6 6zM21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4v-2H3V5h18v12h-4v2h4c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
-            </button>
             <button class="cast-btn" id="castBtn" title="Cast to TV">
               <svg viewBox="0 0 24 24"><path d="M1 18v3h3c0-1.66-1.34-3-3-3zm0-4v2c2.76 0 5 2.24 5 5h2c0-3.87-3.13-7-7-7zm0-4v2c4.97 0 9 4.03 9 9h2c0-6.08-4.93-11-11-11zm20-7H3c-1.1 0-2 .9-2 2v3h2V5h18v14h-7v2h7c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
             </button>
           </div>
-          <div id="airplayNative" style="display:none;margin-top:12px;width:100%;max-width:320px;">
-            <div style="font-size:0.6rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">AirPlay</div>
-            <audio id="airplayPlayer" controls preload="none" playsinline x-webkit-airplay="allow" style="width:100%;height:32px;opacity:0.5;"></audio>
-          </div>
+
         </div>
       </div>
 
@@ -629,16 +623,11 @@
   btn.addEventListener('click', () => {
     if (!playing) {
       audio.src = STREAM;
-      // Set airplayPlayer src so iOS detects it as castable media
-      const ap = document.getElementById('airplayPlayer');
-      if (ap) ap.src = STREAM;
       audio.play().catch(() => { status.textContent = 'Playback blocked. Tap again.'; setState(false); audio.src = ''; });
       setState(true);
       status.textContent = 'Connecting...';
     } else {
       audio.pause(); audio.src = '';
-      const ap = document.getElementById('airplayPlayer');
-      if (ap) { ap.pause(); ap.src = ''; }
       setState(false); status.textContent = '';
     }
   });
@@ -665,9 +654,6 @@
   audio.addEventListener('error',   () => { status.textContent = 'Stream error. Try again.'; setState(false); audio.src = ''; });
 
   // Show native AirPlay bar only on iOS
-  if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-    document.getElementById('airplayNative').style.display = 'block';
-  }
   let castSession = null;
 
   window['__onGCastApiAvailable'] = function(isAvailable) {
@@ -698,19 +684,6 @@
     }).catch(err => console.log('Cast session error:', err));
   });
 
-  // ---- AirPlay (iOS) ----
-  const airplayBtn = document.getElementById('airplayBtn');
-  if (window.WebKitPlaybackTargetAvailabilityEvent) {
-    audio.addEventListener('webkitplaybacktargetavailabilitychanged', (e) => {
-      airplayBtn.style.display = e.availability === 'available' ? 'block' : 'none';
-    });
-    airplayBtn.addEventListener('click', async () => {
-      try {
-        await audio.play();
-        audio.webkitShowPlaybackTargetPicker();
-      } catch(e) { console.log('AirPlay error:', e); }
-    });
-  }
 </script>
 </body>
 </html>
