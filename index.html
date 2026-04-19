@@ -554,7 +554,7 @@
       introAudio.play();
     }, 600);
 
-    // Fade audio and video out over 1.5 seconds starting at 7 seconds
+    // Fade audio and video out over 1.5 seconds starting at 6.5 seconds
     setTimeout(() => {
       let vol = 1;
       let opacity = 1;
@@ -565,7 +565,7 @@
         introVideo.style.opacity = opacity;
         if (vol <= 0) clearInterval(fadeOut);
       }, 50);
-    }, 7000);
+    }, 6500);
 
     // Fade to player at 8.5 seconds
     setTimeout(() => {
