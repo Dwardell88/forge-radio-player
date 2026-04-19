@@ -18,9 +18,9 @@
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --fire:  #FF6B00;
-      --amber: #FFB300;
-      --ember: #CC2200;
+      --fire:  #F0B824;
+      --amber: #F5D060;
+      --ember: #C88A10;
       --text:  #F2EDE4;
       --muted: #777;
       --tab-h: 58px;
@@ -90,8 +90,8 @@
     }
 
     @keyframes logoPulse {
-      0%,100% { filter: drop-shadow(0 0 30px rgba(255,107,0,0.4)); }
-      50%      { filter: drop-shadow(0 0 55px rgba(255,180,0,0.7)); }
+      0%,100% { filter: drop-shadow(0 0 30px rgba(240,184,36,0.5)); }
+      50%      { filter: drop-shadow(0 0 55px rgba(245,208,96,0.8)); }
     }
 
     .enter-btn {
@@ -99,7 +99,7 @@
       padding: 16px 44px;
       border: none;
       border-radius: 3px;
-      background: linear-gradient(135deg, #FF8C00, #B81A00);
+      background: linear-gradient(135deg, #F0B824, #C88A10);
       font-family: 'Bebas Neue', sans-serif;
       font-size: 1.5rem;
       letter-spacing: 0.18em;
@@ -272,7 +272,7 @@
       border-radius: 50%; border: none; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 20px;
-      background: radial-gradient(circle at 38% 32%, #FF8C00, #B81A00);
+      background: radial-gradient(circle at 38% 32%, #F5D060, #C88A10);
       box-shadow: 0 0 0 1px rgba(255,107,0,0.55), 0 0 22px rgba(255,107,0,0.6), 0 0 55px rgba(255,107,0,0.25), inset 0 1px 0 rgba(255,200,100,0.35);
       transition: transform 0.14s ease;
       position: relative;
@@ -335,7 +335,7 @@
     .req-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,107,0,0.3); border-radius: 4px; padding: 10px 12px; font-family: 'Rajdhani', sans-serif; font-size: 0.95rem; font-weight: 500; color: var(--text); outline: none; transition: border-color 0.2s; }
     .req-input:focus { border-color: rgba(255,107,0,0.8); }
     .req-input::placeholder { color: #555; }
-    .req-btn { width: 100%; margin-top: 6px; padding: 13px; border: none; border-radius: 4px; background: linear-gradient(135deg, #FF6B00, #B81A00); font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.12em; color: #fff; cursor: pointer; box-shadow: 0 0 18px rgba(255,107,0,0.35); transition: transform 0.12s; }
+    .req-btn { width: 100%; margin-top: 6px; padding: 13px; border: none; border-radius: 4px; background: linear-gradient(135deg, #F0B824, #C88A10); font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.12em; color: #fff; cursor: pointer; box-shadow: 0 0 18px rgba(255,107,0,0.35); transition: transform 0.12s; }
     .req-btn:active { transform: scale(0.98); }
     .req-confirm { display: none; text-align: center; padding: 20px 0; font-size: 1rem; color: var(--amber); font-weight: 600; text-shadow: 0 0 12px rgba(255,180,0,0.5); }
 
@@ -373,7 +373,7 @@
     <source src="IntroAudio.mp3" type="audio/mpeg">
   </audio>
   <div class="intro-content visible" id="stageLanding" style="position:relative;z-index:2;">
-    <img class="landing-logo" src="Logo.png" alt="The Forge Christian Radio" />
+    <img class="landing-logo" src="New_Logo.png" alt="The Forge Christian Radio" />
     <button class="enter-btn" id="enterBtn" style="margin-top:48px;">Enter The Forge</button>
   </div>
 </div>
