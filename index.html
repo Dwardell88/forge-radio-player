@@ -54,19 +54,6 @@
       pointer-events: none;
     }
 
-    /* MP4 video - full screen behind logo */
-    #introVideo {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 1;
-      transition: opacity 0.8s ease;
-    }
-
-    #introVideo.fadeout { opacity: 0; }
-
     /* Logo and button sit above video */
     .intro-content {
       position: relative;
@@ -366,12 +353,6 @@
 
 <!-- INTRO SCREEN -->
 <div id="intro">
-  <video id="introVideo" muted playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;opacity:0;transition:opacity 0.6s ease;">
-    <source src="Intro.mp4" type="video/mp4">
-  </video>
-  <audio id="introAudio">
-    <source src="IntroAudio.mp3" type="audio/mpeg">
-  </audio>
   <div class="intro-content visible" id="stageLanding" style="position:relative;z-index:2;">
     <img class="landing-logo" src="New_Logo.png" alt="The Forge Christian Radio" />
     <button class="enter-btn" id="enterBtn" style="margin-top:48px;">Enter The Forge</button>
@@ -531,8 +512,6 @@
 
 <script>
   const intro      = document.getElementById('intro');
-  const introVideo = document.getElementById('introVideo');
-  const introAudio = document.getElementById('introAudio');
   const stageLanding = document.getElementById('stageLanding');
 
   document.getElementById('enterBtn').addEventListener('click', () => {
