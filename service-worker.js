@@ -1,5 +1,5 @@
 // Service Worker v1.1
-const CACHE_NAME = 'forge-radio-v1.4';
+const CACHE_NAME = 'forge-radio-v1.5';
 const ASSETS = [
   '/',
   '/index.html',
