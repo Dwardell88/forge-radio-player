@@ -70,8 +70,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      opacity: 0;
-      transition: opacity 0.8s ease;
+      opacity: 1;
     }
 
     .intro-content.visible { opacity: 1; }
@@ -562,15 +561,15 @@
   const stageLanding = document.getElementById('stageLanding');
 
   document.getElementById('enterBtn').addEventListener('click', () => {
-    // Fade out the logo/button
     stageLanding.style.transition = 'opacity 0.8s ease';
     stageLanding.style.opacity = '0';
 
-    // Fade to player after 2 seconds
     setTimeout(() => {
       intro.classList.add('hidden');
-      document.getElementById('player').classList.add('visible');
-      setTimeout(() => { intro.style.display = 'none'; }, 1500);
+      setTimeout(() => {
+        intro.style.display = 'none';
+        document.getElementById('player').classList.add('visible');
+      }, 1500);
     }, 1000);
   });
 
