@@ -1,7 +1,7 @@
 {
   "name": "The Forge Radio",
   "short_name": "The Forge Radio",
-  "start_url": "./?v=4",
+  "start_url": "./?v=5",
   "display": "standalone",
   "background_color": "#070707",
   "theme_color": "#F0B824",
