@@ -7,7 +7,13 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="The Forge Radio" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="manifest" href="manifest.json?v=15">
+  <link rel="manifest" href="manifest.json?v=4">
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js?v=' + Date.now())
+        .then(reg => { reg.update(); });
+    }
+  </script>
   <link rel="apple-touch-icon" href="forge-icon.png">
   <link rel="icon" type="image/png" sizes="512x512" href="forge-icon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="forge-icon-192.png">
@@ -344,8 +350,6 @@
     .show-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 0.08em; color: var(--text); margin-bottom: 4px; }
     .show-time { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--amber); margin-bottom: 5px; }
     .show-desc { font-size: 0.8rem; color: var(--fire); line-height: 1.5; opacity: 0.85; }
-    .show-time { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--fire); margin-bottom: 5px; }
-    .show-desc { font-size: 0.8rem; color: rgba(255,255,255,0.6); line-height: 1.5; }
 
     /* PARTNERS */
     .partner-item { background: rgba(0,0,0,0.45); border: 1px solid rgba(255,107,0,0.15); border-radius: 6px; padding: 16px; margin-bottom: 14px; text-align: center; }
