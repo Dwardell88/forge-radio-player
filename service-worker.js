@@ -1,5 +1,5 @@
 // Service Worker v1.12
-const CACHE_NAME = 'forge-radio-v17';
+const CACHE_NAME = 'forge-radio-v18';
 
 self.addEventListener('install', e => {
   self.skipWaiting();
