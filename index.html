@@ -142,7 +142,7 @@
       max-width: 480px;
       margin: 0 auto;
       padding-top: env(safe-area-inset-top);
-      background: url('playerBG.png') top center / 100% 100% no-repeat;
+      background: none;
       opacity: 0;
       transition: opacity 0.8s ease;
     }
@@ -191,6 +191,7 @@
 
     #panel-listen {
       padding-top: 260px;
+      background: url('playerBG.png') top center / 100% 100% no-repeat;
     }
 
     .panel.active { opacity: 1; pointer-events: auto; }
@@ -301,7 +302,7 @@
 
     .audio-bars {
       display: flex; align-items: flex-end; justify-content: center;
-      gap: 4px; height: 20px; margin-bottom: 4px;
+      gap: 4px; height: 20px; margin-bottom: 2px;
       opacity: 0; transition: opacity 0.3s;
     }
     .audio-bars.active { opacity: 1; }
