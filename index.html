@@ -302,10 +302,10 @@
 
     .audio-bars {
       display: flex; align-items: flex-end; justify-content: center;
-      gap: 4px; height: 20px; margin-bottom: 2px;
+      gap: 4px; height: 0; margin-bottom: 0;
       opacity: 0; transition: opacity 0.3s;
     }
-    .audio-bars.active { opacity: 1; }
+    .audio-bars.active { opacity: 1; height: 20px; margin-bottom: 2px; }
     .bar {
       width: 4px; border-radius: 2px;
       background: linear-gradient(to top, var(--ember), var(--amber));
