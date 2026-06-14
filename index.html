@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="The Forge Radio" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="manifest" href="manifest.json?v=22">
+  <link rel="manifest" href="manifest.json?v=23">
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js?v=' + Date.now())
@@ -142,7 +142,7 @@
       max-width: 480px;
       margin: 0 auto;
       padding-top: env(safe-area-inset-top);
-      background: url('playerBG.png') center calc(env(safe-area-inset-top) + 20px) / cover no-repeat;
+      background: url('playerBG.png') top center / 100% 100% no-repeat;
       opacity: 0;
       transition: opacity 0.8s ease;
     }
@@ -190,7 +190,7 @@
     }
 
     #panel-listen {
-      padding-top: 220px;
+      padding-top: 320px;
     }
 
     .panel.active { opacity: 1; pointer-events: auto; }
@@ -395,7 +395,7 @@
       <!-- LISTEN -->
       <div class="panel active" id="panel-listen">
         <div class="listen-inner">
-          <div style="position:relative;margin-bottom:20px;filter:drop-shadow(0 0 25px rgba(240,184,36,1)) drop-shadow(0 0 50px rgba(240,184,36,0.7));">
+          <div style="position:relative;margin-bottom:40px;filter:drop-shadow(0 0 25px rgba(240,184,36,1)) drop-shadow(0 0 50px rgba(240,184,36,0.7));">
             <button class="play-btn idle" id="playBtn" aria-label="Play / Pause" style="background:none;border:none;box-shadow:none;width:100px;height:100px;cursor:pointer;padding:0;">
               <img id="btnIcon" src="New_Button.png" alt="Play" style="width:100px;height:100px;object-fit:contain;" />
             </button>
@@ -407,7 +407,11 @@
             <div class="bar" style="--spd:.90s;--dly:.05s"></div>
             <div class="bar" style="--spd:.70s;--dly:.15s"></div>
           </div>
-          <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(240,184,36,0.8);margin-bottom:8px;" id="status">Press to Play</div>
+          <div class="np-label">Now Playing</div>
+          <div class="np-track"><span class="np-inner" id="npInner">Tap play to listen</span></div>
+          <div class="status" id="status"></div>
+          <div class="divider"></div>
+          <a class="site-link" href="https://www.theforgeradio.org" target="_blank" rel="noopener">theforgeradio.org</a>
           <div class="cast-row">
             <button class="cast-btn" id="castBtn" title="Cast to TV">
               <svg viewBox="0 0 24 24"><path d="M1 18v3h3c0-1.66-1.34-3-3-3zm0-4v2c2.76 0 5 2.24 5 5h2c0-3.87-3.13-7-7-7zm0-4v2c4.97 0 9 4.03 9 9h2c0-6.08-4.93-11-11-11zm20-7H3c-1.1 0-2 .9-2 2v3h2V5h18v14h-7v2h7c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
@@ -669,11 +673,11 @@
       status.textContent = 'Connecting...';
     } else {
       audio.pause(); audio.src = '';
-      setState(false); status.textContent = 'Press to Play';
+      setState(false); status.textContent = '';
     }
   });
 
-  audio.addEventListener('playing', () => { status.textContent = 'Now Playing'; });
+  audio.addEventListener('playing', () => { status.textContent = ''; });
   audio.addEventListener('waiting', () => { status.textContent = 'Buffering...'; });
   audio.addEventListener('error',   () => { status.textContent = 'Stream error. Try again.'; setState(false); audio.src = ''; });
 
