@@ -409,7 +409,6 @@
             <div class="bar" style="--spd:.70s;--dly:.15s"></div>
           </div>
           <div class="np-label">Now Playing</div>
-          <div class="np-track"><span class="np-inner" id="npInner">Tap play to listen</span></div>
           <div class="status" id="status"></div>
           <div class="divider"></div>
           <a class="site-link" href="https://www.theforgeradio.org" target="_blank" rel="noopener">theforgeradio.org</a>
@@ -650,7 +649,6 @@
   // ---- Audio player ----
   const STREAM = 'https://streaming.live365.com/a31364';
   const audio  = document.getElementById('audio');
-  audio.src = STREAM;
   const btn    = document.getElementById('playBtn');
   const icon   = document.getElementById('btnIcon');
   const bars   = document.getElementById('bars');
@@ -671,7 +669,7 @@
       audio.src = STREAM;
       audio.play().catch(() => { status.textContent = 'Playback blocked. Tap again.'; setState(false); audio.src = ''; });
       setState(true);
-      status.textContent = 'Connecting...';
+      status.textContent = '';
     } else {
       audio.pause(); audio.src = '';
       setState(false); status.textContent = '';
@@ -679,8 +677,8 @@
   });
 
   audio.addEventListener('playing', () => { status.textContent = ''; });
-  audio.addEventListener('waiting', () => { status.textContent = 'Buffering...'; });
-  audio.addEventListener('error',   () => { status.textContent = 'Stream error. Try again.'; setState(false); audio.src = ''; });
+  audio.addEventListener('waiting', () => { status.textContent = ''; });
+  audio.addEventListener('error',   () => { status.textContent = ''; setState(false); audio.src = ''; });
 
   // Show native AirPlay bar only on iOS
   let castSession = null;
