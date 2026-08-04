@@ -8,21 +8,14 @@
 <meta name="apple-mobile-web-app-title" content="The Forge Radio">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<link rel="manifest" href="manifest.json?v=37">
+<link rel="manifest" href="manifest.json?v=33">
 <link rel="apple-touch-icon" href="forge-icon.png">
 <link rel="icon" type="image/png" sizes="512x512" href="forge-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="forge-icon-192.png">
 <script>
-  // Clear the old PWA cache while the layout is being updated.
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', async () => {
-      const registrations = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(registrations.map(registration => registration.unregister()));
-      if ('caches' in window) {
-        const keys = await caches.keys();
-        await Promise.all(keys.map(key => caches.delete(key)));
-      }
-    });
+    navigator.serviceWorker.register('/service-worker.js?v=' + Date.now())
+      .then(reg => { reg.update(); });
   }
 </script>
 <style>
@@ -49,8 +42,7 @@ body {
 .forge-wrap {
   position: relative;
   width: min(100vw, 520px);
-  aspect-ratio: 3 / 4;
-  max-height: 100svh;
+  height: 100svh;
   background: #000;
   overflow: hidden;
 }
@@ -86,30 +78,13 @@ body {
 .nav-shows    { left: 60%; top: 91.2%; width: 20%; height: 8.8%; z-index: 10; }
 .nav-partners { left: 80%; top: 91.2%; width: 20%; height: 8.8%; z-index: 10; }
 
-@media (max-aspect-ratio: 3 / 4) {
-  .forge-wrap {
-    width: 100vw;
-    height: auto;
-  }
-}
-
-@media (min-aspect-ratio: 3 / 4) {
-  .forge-wrap {
-    height: 100svh;
-    width: auto;
-    max-width: 520px;
-  }
-}
-
 @media (min-width: 540px) {
-  body {
-    align-items: center;
-    padding: 18px 0;
-  }
-
+  body { align-items: center; padding: 18px 0; }
   .forge-wrap {
-    height: min(calc(100svh - 36px), 900px);
     width: auto;
+    height: calc(100svh - 36px);
+    max-height: 960px;
+    aspect-ratio: unset;
   }
 }
 
@@ -450,7 +425,7 @@ body {
 <!-- INTRO -->
 <div id="intro">
   <div class="forge-wrap">
-    <img class="bg" src="Intro_BG.png?v=20260804-2" alt="FORGE Christian Radio" />
+    <img class="bg" src="Intro_BG.png" alt="FORGE Christian Radio" />
     <a class="hotspot enter-link" id="enterBtn" href="#">Enter the FORGE</a>
     <a class="hotspot sandbox-link" href="https://www.sandboxdlabs.com" target="_blank" rel="noopener">Sandbox'd Labs</a>
     <a class="hotspot facebook-link" href="https://www.facebook.com/forgeinternetradio" target="_blank" rel="noopener">Facebook</a>
@@ -464,7 +439,7 @@ body {
 
     <!-- LISTEN -->
     <div class="tab-panel active" id="panel-listen">
-      <img class="bg" src="Player_BG.png?v=20260804-2" alt="FORGE Radio Player" />
+      <img class="bg" src="Player_BG.png" alt="FORGE Radio Player" />
       <div class="equalizer-mask" aria-hidden="true"></div>
       <div id="liveEqualizer" class="live-equalizer" aria-hidden="true">
         <span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span>
@@ -490,7 +465,7 @@ body {
 
     <!-- NEWS -->
     <div class="tab-panel" id="panel-news">
-      <img class="bg" src="News_BG.png?v=20260804-2" alt="FORGE News" />
+      <img class="bg" src="News_BG.png" alt="FORGE News" />
       <div class="news-ticker" aria-hidden="true">
         <div class="ticker-track">
           <span>Live Sermons Coming September 6th</span>
@@ -514,7 +489,7 @@ body {
 
     <!-- REQUEST -->
     <div class="tab-panel" id="panel-request">
-      <img class="bg" src="Request_BG.png?v=20260804-2" alt="FORGE Song Request" />
+      <img class="bg" src="Request_BG.png" alt="FORGE Song Request" />
       <input id="reqName"   class="req-field" type="text" placeholder="First name"            aria-label="Your name" />
       <input id="reqSong"   class="req-field" type="text" placeholder="Song title"            aria-label="Song title" />
       <input id="reqArtist" class="req-field" type="text" placeholder="Artist name"           aria-label="Artist name" />
