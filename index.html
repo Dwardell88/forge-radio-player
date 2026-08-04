@@ -37,25 +37,9 @@ body {
 }
 
 /* =====================
-   INTRO SCREEN
+   SHARED WRAP
 ===================== */
-#intro {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  background: #000;
-  transition: opacity 0.8s ease;
-}
-
-#intro.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.intro-wrap {
+.forge-wrap {
   position: relative;
   width: min(100vw, 520px);
   aspect-ratio: 2 / 3;
@@ -63,7 +47,7 @@ body {
   overflow: hidden;
 }
 
-.intro-wrap img {
+.forge-wrap > .bg {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -71,6 +55,8 @@ body {
   object-fit: contain;
   display: block;
   pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .hotspot {
@@ -85,46 +71,46 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-.enter-link {
-  left: 11%;
-  top: 63%;
-  width: 78%;
-  height: 11%;
-  border-radius: 8px;
-}
-
-.sandbox-link {
-  left: 28%;
-  top: 75%;
-  width: 44%;
-  height: 5%;
-}
-
-.facebook-link {
-  left: 4%;
-  top: 81%;
-  width: 44%;
-  height: 12%;
-}
-
-.website-link {
-  left: 52%;
-  top: 81%;
-  width: 44%;
-  height: 12%;
-}
+/* Tab nav hotspots — same positions on every panel */
+.nav-listen   { left: 0%;  top: 91.2%; width: 20%; height: 8.8%; z-index: 10; }
+.nav-news     { left: 20%; top: 91.2%; width: 20%; height: 8.8%; z-index: 10; }
+.nav-request  { left: 40%; top: 91.2%; width: 20%; height: 8.8%; z-index: 10; }
+.nav-shows    { left: 60%; top: 91.2%; width: 20%; height: 8.8%; z-index: 10; }
+.nav-partners { left: 80%; top: 91.2%; width: 20%; height: 8.8%; z-index: 10; }
 
 @media (min-width: 540px) {
-  #intro { align-items: center; }
-  .intro-wrap {
+  body { align-items: center; padding: 18px 0; }
+  .forge-wrap {
     width: auto;
     height: calc(100svh - 36px);
     max-height: 960px;
+    aspect-ratio: unset;
   }
 }
 
 /* =====================
-   APP (TAB SHELL)
+   INTRO
+===================== */
+#intro {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: #000;
+  transition: opacity 0.8s ease;
+}
+
+#intro.hidden { opacity: 0; pointer-events: none; }
+
+.enter-link  { left: 11%; top: 63%;  width: 78%; height: 11%; border-radius: 8px; z-index: 5; }
+.sandbox-link{ left: 28%; top: 75%;  width: 44%; height: 5%;  z-index: 5; }
+.facebook-link{ left: 4%; top: 81%;  width: 44%; height: 12%; z-index: 5; }
+.website-link { left: 52%; top: 81%; width: 44%; height: 12%; z-index: 5; }
+
+/* =====================
+   APP
 ===================== */
 #app {
   position: fixed;
@@ -138,79 +124,42 @@ body {
   pointer-events: none;
 }
 
-#app.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
+#app.visible { opacity: 1; pointer-events: auto; }
 
-.page-wrap {
-  position: relative;
-  width: min(100vw, 520px);
-  height: 100svh;
-  background: #000;
-  overflow: hidden;
-}
-
-/* Each tab panel */
 .tab-panel {
   position: absolute;
   inset: 0;
   display: none;
-  overflow: hidden;
 }
 
-.tab-panel.active {
-  display: block;
-}
-
-/* Background images fill each panel */
-.tab-panel > .panel-bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-  pointer-events: none;
-  user-select: none;
-}
+.tab-panel.active { display: block; }
 
 /* =====================
-   LISTEN TAB
+   LISTEN
 ===================== */
 .play-button {
-  left: 35.3%;
-  top: 51.1%;
-  width: 29.4%;
-  height: 19.6%;
-  border-radius: 50%;
-  z-index: 8;
+  left: 35.3%; top: 51.1%;
+  width: 29.4%; height: 19.6%;
+  border-radius: 50%; z-index: 8;
 }
 
 .speaker-cone {
   position: absolute;
-  top: 56.64%;
-  width: 16.60%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 6;
+  top: 56.64%; width: 16.60%;
+  aspect-ratio: 1; border-radius: 50%;
+  pointer-events: none; z-index: 6;
   transform-origin: center;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
   clip-path: circle(48% at 50% 50%);
   will-change: transform, filter;
-  background-color: rgba(0,0,0,0.3);
+  background-color: rgba(0,0,0,0.2);
 }
 
-.speaker-cone.left { left: 8.01%; }
+.speaker-cone.left  { left: 8.01%; }
 .speaker-cone.right { right: 8.01%; }
 
 .speaker-cone.playing {
   animation: coneThump .34s cubic-bezier(.35,0,.65,1) infinite alternate;
 }
-
 .speaker-cone.right.playing { animation-delay: .10s; }
 
 @keyframes coneThump {
@@ -221,76 +170,53 @@ body {
 
 .stream-status {
   position: absolute;
-  left: 50%;
-  top: 72.9%;
+  left: 50%; top: 72.9%;
   transform: translateX(-50%);
-  z-index: 9;
-  padding: 5px 11px;
+  z-index: 9; padding: 5px 11px;
   border-radius: 999px;
   background: rgba(0,0,0,.78);
   color: #ffc400;
   font-size: clamp(.5rem,1.4vw,.68rem);
-  font-weight: 900;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity .15s ease;
+  font-weight: 900; letter-spacing: .08em;
+  text-transform: uppercase; white-space: nowrap;
+  opacity: 0; transition: opacity .15s ease;
   pointer-events: none;
 }
-
 .stream-status.show { opacity: 1; }
 
-/* Equalizer mask covers baked-in bars */
 .equalizer-mask {
   position: absolute;
-  left: 8.4%;
-  top: 79.05%;
-  width: 83.2%;
-  height: 6.75%;
-  z-index: 6;
-  pointer-events: none;
-  overflow: hidden;
-  border-radius: 2px;
+  left: 8.4%; top: 79.05%;
+  width: 83.2%; height: 6.75%;
+  z-index: 6; pointer-events: none;
+  overflow: hidden; border-radius: 2px;
   background:
     repeating-linear-gradient(90deg, rgba(26,26,22,.98) 0 6px, rgba(4,4,4,.98) 6px 10px),
     repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 2px, rgba(0,0,0,.98) 2px 8px),
     #050505;
-  box-shadow: inset 0 0 18px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,196,0,.08);
 }
 
 .live-equalizer {
   position: absolute;
-  left: 8.7%;
-  top: 79.15%;
-  width: 82.6%;
-  height: 6.55%;
-  z-index: 7;
-  display: flex;
+  left: 8.7%; top: 79.15%;
+  width: 82.6%; height: 6.55%;
+  z-index: 7; display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  padding: 1.2% 1.5%;
-  overflow: hidden;
-  pointer-events: none;
-  opacity: 0;
+  padding: 1.2% 1.5%; overflow: hidden;
+  pointer-events: none; opacity: 0;
   transition: opacity .15s ease;
 }
-
 .live-equalizer.playing { opacity: 1; }
 
 .eq-bar {
-  width: 1.4%;
-  min-width: 2px;
-  height: 14%;
+  width: 1.4%; min-width: 2px; height: 14%;
   border-radius: 2px 2px 0 0;
   background: linear-gradient(to top, rgba(255,145,0,.95), rgba(255,196,0,1) 58%, rgba(255,239,128,1));
   box-shadow: 0 0 5px rgba(255,196,0,.55);
   transform-origin: bottom;
 }
-
-.live-equalizer.playing .eq-bar {
-  animation: forgeBarMove .48s ease-in-out infinite alternate;
-}
+.live-equalizer.playing .eq-bar { animation: forgeBarMove .48s ease-in-out infinite alternate; }
 .live-equalizer.playing .eq-bar:nth-child(2n) { animation-duration: .86s; }
 .live-equalizer.playing .eq-bar:nth-child(3n) { animation-duration: .49s; }
 .live-equalizer.playing .eq-bar:nth-child(4n) { animation-duration: 1.02s; }
@@ -304,287 +230,201 @@ body {
 }
 
 /* =====================
-   NEWS TAB
+   NEWS hotspots
 ===================== */
-.news-scroll {
+.story-1  { left: 34%; top: 31.1%; width: 60%; height: 15.4%; z-index: 5; }
+.story-2  { left: 34%; top: 48.3%; width: 60%; height: 16.2%; z-index: 5; }
+.story-3  { left: 34%; top: 65.2%; width: 60%; height: 16.1%; z-index: 5; }
+.fb-link  { left: 34%; top: 82.2%; width: 60%; height: 10.4%; z-index: 5; }
+
+.news-ticker {
   position: absolute;
-  left: 0; right: 0;
-  top: 28%;
-  bottom: 9%;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  z-index: 5;
-  padding: 0 4%;
+  left: 20.5%; top: 26.0%;
+  width: 74%; height: 3.9%;
+  overflow: hidden; z-index: 4;
+  pointer-events: none;
+  display: flex; align-items: center;
 }
-
-.news-story {
-  display: flex;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(255,196,0,0.15);
-  cursor: pointer;
+.ticker-track {
+  display: inline-flex; align-items: center;
+  gap: 3rem; min-width: max-content; height: 100%;
+  color: rgba(255,255,255,.08);
+  font-size: clamp(.45rem,1.1vw,.64rem);
+  letter-spacing: .04em; text-transform: uppercase;
+  animation: tickerMove 20s linear infinite;
 }
-
-.news-story-text { flex: 1; }
-
-.news-date {
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #ffc400;
-  margin-bottom: 3px;
-}
-
-.news-title {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 4px;
-  line-height: 1.3;
-}
-
-.news-body {
-  font-size: 0.75rem;
-  color: rgba(255,255,255,0.65);
-  line-height: 1.5;
-}
-
-.news-link {
-  display: inline-block;
-  margin-top: 4px;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #ffc400;
-  text-decoration: none;
-}
-
-.fb-row {
-  display: flex;
-  gap: 12px;
-  padding: 10px 0;
+@keyframes tickerMove {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
 }
 
 /* =====================
-   REQUEST TAB
+   NEWS MODAL
 ===================== */
-.field {
+.modal {
+  position: fixed; inset: 0; z-index: 200;
+  display: none; align-items: center;
+  justify-content: center; padding: 22px;
+  background: rgba(0,0,0,.86);
+  backdrop-filter: blur(8px);
+}
+.modal.open { display: flex; }
+
+.modal-card {
+  width: min(520px, 94vw); max-height: 82svh;
+  overflow: auto;
+  border: 1px solid rgba(255,196,0,.42);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,.035), transparent), #0c0c0c;
+  box-shadow: 0 0 0 1px rgba(255,196,0,.08) inset, 0 24px 80px rgba(0,0,0,.75), 0 0 34px rgba(255,196,0,.12);
+  padding: 24px; color: #fff;
+}
+.modal-card .kicker {
+  color: #ffc400; font-size: .72rem; font-weight: 900;
+  letter-spacing: .13em; text-transform: uppercase; margin-bottom: 8px;
+}
+.modal-card h2 { margin: 0 0 14px; font-size: 1.45rem; line-height: 1.15; }
+.modal-card p  { margin: 0; color: #c3c3c3; line-height: 1.65; font-size: .95rem; }
+.modal-card a  { color: #ffc400; font-size: .75rem; font-weight: 700; text-decoration: none; display: inline-block; margin-top: 12px; }
+.close-btn {
+  margin-top: 22px; width: 100%; border: 0;
+  border-radius: 12px; padding: 13px 16px;
+  background: linear-gradient(135deg, #fff27a, #ffc400, #ff9800);
+  color: #050505; font-weight: 900; cursor: pointer;
+  font-size: 1rem;
+}
+
+/* =====================
+   REQUEST fields
+===================== */
+.req-field {
   position: absolute;
-  left: 23.4%;
-  width: 60.8%;
-  height: 4.25%;
-  z-index: 5;
-  border: 0;
-  outline: none;
-  border-radius: 2px;
-  padding: 0 3%;
-  background: rgba(4,4,4,.96);
-  color: #f4f4f4;
-  font-size: clamp(.72rem,2vw,1rem);
-  font-weight: 600;
+  left: 23.4%; width: 60.8%; height: 4.25%;
+  z-index: 5; border: 0; outline: none;
+  border-radius: 2px; padding: 0 3%;
+  background: rgba(4,4,4,.96); color: #f4f4f4;
+  font-size: clamp(.72rem,2vw,1rem); font-weight: 600;
   letter-spacing: .01em;
   box-shadow: inset 0 0 0 1px rgba(255,180,0,.45);
 }
-
-.field::placeholder { color: #707070; opacity: 1; }
-.field:focus { box-shadow: inset 0 0 0 1px #ffc400, 0 0 10px rgba(255,196,0,.28); }
+.req-field::placeholder { color: #707070; opacity: 1; }
+.req-field:focus { box-shadow: inset 0 0 0 1px #ffc400, 0 0 10px rgba(255,196,0,.28); }
 
 #reqName   { top: 45.25%; }
 #reqSong   { top: 53.05%; }
 #reqArtist { top: 60.55%; }
 #reqNote   { top: 67.95%; }
 
-.req-submit {
+.req-submit-btn {
   position: absolute;
-  left: 15.7%;
-  top: 74.2%;
-  width: 68.7%;
-  height: 6.1%;
-  z-index: 6;
-  border: 0;
-  border-radius: 2px;
-  background: transparent;
-  cursor: pointer;
+  left: 15.7%; top: 74.2%;
+  width: 68.7%; height: 6.1%;
+  z-index: 6; border: 0; border-radius: 2px;
+  background: transparent; cursor: pointer;
   color: transparent;
   -webkit-tap-highlight-color: transparent;
 }
+.req-submit-btn:active { transform: scale(.985); }
 
 .req-status {
   position: absolute;
-  bottom: 12%;
-  left: 50%;
+  left: 50%; top: 82.35%;
   transform: translateX(-50%);
-  z-index: 9;
-  padding: 6px 14px;
+  z-index: 8; padding: 6px 12px;
   border-radius: 999px;
-  background: rgba(0,0,0,.85);
+  background: rgba(0,0,0,.88);
+  border: 1px solid rgba(255,196,0,.35);
   color: #ffc400;
-  font-size: clamp(.55rem,1.5vw,.75rem);
-  font-weight: 900;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  opacity: 0;
+  font-size: clamp(.55rem,1.5vw,.7rem);
+  font-weight: 900; letter-spacing: .07em;
+  text-transform: uppercase; white-space: nowrap;
+  opacity: 0; pointer-events: none;
   transition: opacity .2s ease;
-  pointer-events: none;
 }
-
 .req-status.show { opacity: 1; }
 
 /* =====================
-   SHOWS & PARTNERS TABS
+   SHOWS / PARTNERS (scrollable on black)
 ===================== */
-.content-scroll {
-  position: absolute;
-  left: 0; right: 0;
-  top: 22%;
-  bottom: 9%;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  z-index: 5;
-  padding: 0 5%;
+.black-panel {
+  position: absolute; inset: 0;
+  background: #000; overflow: hidden;
 }
 
-.show-item {
-  background: rgba(255,196,0,0.05);
-  border: 1px solid rgba(255,196,0,0.2);
-  border-radius: 6px;
-  padding: 12px;
-  margin-bottom: 12px;
-}
-
-.show-time {
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: #ffc400;
-  text-align: center;
-  margin-bottom: 4px;
-}
-
-.show-name {
-  font-family: Arial, sans-serif;
-  font-size: 1rem;
-  font-weight: 900;
-  color: #fff;
-  margin-bottom: 4px;
-  text-align: center;
-}
-
-.show-desc {
-  font-size: 0.78rem;
-  color: rgba(255,255,255,0.65);
-  line-height: 1.5;
-}
-
-.partner-item {
-  background: rgba(255,196,0,0.05);
-  border: 1px solid rgba(255,196,0,0.2);
-  border-radius: 6px;
-  padding: 16px;
-  margin-bottom: 12px;
-  text-align: center;
-}
-
-.partner-logo {
-  max-width: 200px;
-  max-height: 80px;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  display: block;
-  margin: 0 auto 10px;
-}
-
-.partner-name {
-  font-size: 1rem;
-  font-weight: 900;
-  color: #fff;
-  margin-bottom: 5px;
-}
-
-.partner-desc {
-  font-size: 0.78rem;
-  color: rgba(255,255,255,0.65);
-  line-height: 1.5;
-  margin-bottom: 8px;
-}
-
-.partner-link {
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #ffc400;
-  text-decoration: none;
-}
-
-/* Tab nav hotspots on each panel */
-.nav-listen   { position: absolute; left: 0%;  bottom: 0; width: 20%; height: 9%; z-index: 10; cursor: pointer; }
-.nav-news     { position: absolute; left: 20%; bottom: 0; width: 20%; height: 9%; z-index: 10; cursor: pointer; }
-.nav-request  { position: absolute; left: 40%; bottom: 0; width: 20%; height: 9%; z-index: 10; cursor: pointer; }
-.nav-shows    { position: absolute; left: 60%; bottom: 0; width: 20%; height: 9%; z-index: 10; cursor: pointer; }
-.nav-partners { position: absolute; left: 80%; bottom: 0; width: 20%; height: 9%; z-index: 10; cursor: pointer; }
-
-/* Page header label for shows/partners */
-.page-header {
-  position: absolute;
-  top: 3%;
-  left: 0; right: 0;
-  text-align: center;
-  font-size: clamp(1rem, 4vw, 1.6rem);
-  font-weight: 900;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #ffc400;
+.panel-header {
+  position: absolute; top: 0; left: 0; right: 0;
+  padding: 16px; text-align: center;
+  font-size: clamp(1rem,4vw,1.5rem);
+  font-weight: 900; letter-spacing: .12em;
+  text-transform: uppercase; color: #ffc400;
   text-shadow: 0 0 20px rgba(255,196,0,0.5);
-  z-index: 5;
-  pointer-events: none;
+  z-index: 5; background: #000;
+  border-bottom: 1px solid rgba(255,196,0,0.2);
 }
 
-/* Ticker on news */
-.ticker-wrap {
-  position: absolute;
-  left: 0; right: 0;
-  top: 24%;
-  height: 4%;
-  overflow: hidden;
-  z-index: 4;
-  pointer-events: none;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
+.content-scroll {
+  position: absolute; left: 0; right: 0;
+  top: 60px; bottom: 9%;
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  z-index: 4; padding: 12px 16px;
 }
 
-.ticker-track {
-  display: inline-flex;
-  align-items: center;
-  gap: 3rem;
-  min-width: max-content;
-  height: 100%;
-  color: #ffc400;
-  font-size: clamp(.45rem, 1.1vw, .64rem);
-  font-weight: 700;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  animation: tickerMove 25s linear infinite;
+.show-card {
+  background: rgba(255,196,0,.05);
+  border: 1px solid rgba(255,196,0,.2);
+  border-radius: 6px; padding: 12px;
+  margin-bottom: 10px;
 }
+.show-time {
+  font-size: .62rem; font-weight: 700;
+  letter-spacing: .15em; text-transform: uppercase;
+  color: #ffc400; text-align: center; margin-bottom: 3px;
+}
+.show-name {
+  font-size: .95rem; font-weight: 900;
+  color: #fff; text-align: center; margin-bottom: 4px;
+}
+.show-desc { font-size: .76rem; color: rgba(255,255,255,.65); line-height: 1.5; }
 
-@keyframes tickerMove {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+.partner-card {
+  background: rgba(255,196,0,.05);
+  border: 1px solid rgba(255,196,0,.2);
+  border-radius: 6px; padding: 14px;
+  margin-bottom: 10px; text-align: center;
 }
+.partner-logo {
+  max-width: 180px; max-height: 70px;
+  object-fit: contain; display: block;
+  margin: 0 auto 8px;
+}
+.partner-name { font-size: .95rem; font-weight: 900; color: #fff; margin-bottom: 4px; }
+.partner-desc { font-size: .76rem; color: rgba(255,255,255,.65); line-height: 1.5; margin-bottom: 6px; }
+.partner-link { font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #ffc400; text-decoration: none; }
+
+/* Shows/Partners nav at bottom */
+.bottom-nav {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 9%; display: flex; z-index: 10;
+  background: rgba(0,0,0,0.9);
+  border-top: 1px solid rgba(255,196,0,0.2);
+}
+.bnav-btn {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 2px; background: none; border: none;
+  cursor: pointer; padding: 4px 2px;
+}
+.bnav-btn svg { width: 18px; height: 18px; fill: #666; transition: fill .15s; }
+.bnav-btn span { font-size: .52rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #666; transition: color .15s; }
+.bnav-btn.active svg, .bnav-btn.active span { fill: #ffc400; color: #ffc400; }
 </style>
 </head>
 <body>
 
 <!-- INTRO -->
 <div id="intro">
-  <div class="intro-wrap">
-    <img src="Intro_BG.png" alt="FORGE Christian Radio" />
+  <div class="forge-wrap">
+    <img class="bg" src="Intro_BG.png" alt="FORGE Christian Radio" />
     <a class="hotspot enter-link" id="enterBtn" href="#">Enter the FORGE</a>
     <a class="hotspot sandbox-link" href="https://www.sandboxdlabs.com" target="_blank" rel="noopener">Sandbox'd Labs</a>
     <a class="hotspot facebook-link" href="https://www.facebook.com/forgeinternetradio" target="_blank" rel="noopener">Facebook</a>
@@ -594,14 +434,12 @@ body {
 
 <!-- APP -->
 <div id="app">
-  <div class="page-wrap">
+  <div class="forge-wrap">
 
-    <!-- LISTEN TAB -->
+    <!-- LISTEN -->
     <div class="tab-panel active" id="panel-listen">
-      <img class="panel-bg" src="Player_BG.png" alt="FORGE Radio Player" />
-
+      <img class="bg" src="Player_BG.png" alt="FORGE Radio Player" />
       <div class="equalizer-mask" aria-hidden="true"></div>
-
       <div id="liveEqualizer" class="live-equalizer" aria-hidden="true">
         <span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span>
         <span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span>
@@ -613,171 +451,178 @@ body {
         <span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span>
         <span class="eq-bar"></span><span class="eq-bar"></span>
       </div>
-
-      <div id="leftSpeaker" class="speaker-cone left" aria-hidden="true"></div>
+      <div id="leftSpeaker"  class="speaker-cone left"  aria-hidden="true"></div>
       <div id="rightSpeaker" class="speaker-cone right" aria-hidden="true"></div>
-
       <button class="hotspot play-button" id="playBtn" aria-label="Play FORGE Christian Radio"></button>
       <div id="streamStatus" class="stream-status" role="status" aria-live="polite"></div>
-
-      <div class="nav-listen"   onclick="switchTab('listen')"></div>
-      <div class="nav-news"     onclick="switchTab('news')"></div>
-      <div class="nav-request"  onclick="switchTab('request')"></div>
-      <div class="nav-shows"    onclick="switchTab('shows')"></div>
-      <div class="nav-partners" onclick="switchTab('partners')"></div>
+      <div class="hotspot nav-listen"   onclick="switchTab('listen')"></div>
+      <div class="hotspot nav-news"     onclick="switchTab('news')"></div>
+      <div class="hotspot nav-request"  onclick="switchTab('request')"></div>
+      <div class="hotspot nav-shows"    onclick="switchTab('shows')"></div>
+      <div class="hotspot nav-partners" onclick="switchTab('partners')"></div>
     </div>
 
-    <!-- NEWS TAB -->
+    <!-- NEWS -->
     <div class="tab-panel" id="panel-news">
-      <img class="panel-bg" src="News_BG.png" alt="FORGE News" />
-
-      <div class="ticker-wrap" aria-hidden="true">
+      <img class="bg" src="News_BG.png" alt="FORGE News" />
+      <div class="news-ticker" aria-hidden="true">
         <div class="ticker-track">
-          <span>Live Sermons Coming to FORGE Christian Radio &mdash; September 6th!</span>
+          <span>Live Sermons Coming September 6th</span>
           <span>Nationwide Food Drive</span>
           <span>SafeHaven Food Pantry &amp; Thrift Store</span>
           <span>Follow FORGE on Facebook</span>
-          <span>Live Sermons Coming to FORGE Christian Radio &mdash; September 6th!</span>
+          <span>Live Sermons Coming September 6th</span>
           <span>Nationwide Food Drive</span>
         </div>
       </div>
-
-      <div class="news-scroll">
-        <div class="news-story">
-          <div class="news-story-text">
-            <div class="news-date">July 13, 2026</div>
-            <div class="news-title">Live Sermons Coming to Forge Christian Radio</div>
-            <div class="news-body">FORGE Christian Radio will begin broadcasting LIVE Sunday morning sermons from First Baptist Church of Rogersville, MO, featuring the biblical preaching of Pastor Aaron Ipock. Coming September 6th!</div>
-            <a class="news-link" href="https://www.theforgeradio.org/3275767_live-sermons-coming-to-forge-christian-radio" target="_blank" rel="noopener">Read more &rarr;</a>
-          </div>
-        </div>
-        <div class="news-story">
-          <div class="news-story-text">
-            <div class="news-date">May 1, 2026</div>
-            <div class="news-title">Nationwide Food Drive</div>
-            <div class="news-body">Need help feeding families in your community? You can make a difference with the Letter Carriers' Food Drive. Just place your non-perishable food donations in a bag by your mailbox before your mail arrives.</div>
-            <a class="news-link" href="https://www.theforgeradio.org/3146753_nationwide-food-drive" target="_blank" rel="noopener">Read more &rarr;</a>
-          </div>
-        </div>
-        <div class="news-story">
-          <div class="news-story-text">
-            <div class="news-date">March 9, 2026</div>
-            <div class="news-title">SafeHaven Food Pantry &amp; Thrift Store</div>
-            <div class="news-body">SafeHaven Food Pantry and Thrift Store in Rogersville and Fordland, MO is partnering up with The Forge. We will be working with SafeHaven to help the local communities. More info to come.</div>
-            <a class="news-link" href="https://www.theforgeradio.org/2922349_safe-haven-food-pantry-and-thriftstore" target="_blank" rel="noopener">Read more &rarr;</a>
-          </div>
-        </div>
-        <div class="news-story">
-          <div class="news-story-text">
-            <div class="news-date">Stay Connected</div>
-            <div class="news-title">Follow Us on Facebook</div>
-            <div class="news-body">Get real-time updates, behind the scenes content, and connect with the Forge community.</div>
-            <a class="news-link" href="https://www.facebook.com/forgeinternetradio/" target="_blank" rel="noopener">facebook.com/forgeinternetradio &rarr;</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="nav-listen"   onclick="switchTab('listen')"></div>
-      <div class="nav-news"     onclick="switchTab('news')"></div>
-      <div class="nav-request"  onclick="switchTab('request')"></div>
-      <div class="nav-shows"    onclick="switchTab('shows')"></div>
-      <div class="nav-partners" onclick="switchTab('partners')"></div>
+      <button class="hotspot story-1" data-story="sermons"   type="button" aria-label="Live sermons story"></button>
+      <button class="hotspot story-2" data-story="fooddrive" type="button" aria-label="Food drive story"></button>
+      <button class="hotspot story-3" data-story="safehaven" type="button" aria-label="SafeHaven story"></button>
+      <a class="hotspot fb-link" href="https://www.facebook.com/forgeinternetradio" target="_blank" rel="noopener">Facebook</a>
+      <div class="hotspot nav-listen"   onclick="switchTab('listen')"></div>
+      <div class="hotspot nav-news"     onclick="switchTab('news')"></div>
+      <div class="hotspot nav-request"  onclick="switchTab('request')"></div>
+      <div class="hotspot nav-shows"    onclick="switchTab('shows')"></div>
+      <div class="hotspot nav-partners" onclick="switchTab('partners')"></div>
     </div>
 
-    <!-- REQUEST TAB -->
+    <!-- REQUEST -->
     <div class="tab-panel" id="panel-request">
-      <img class="panel-bg" src="Request_BG.png" alt="FORGE Song Request" />
-
-      <input id="reqName"   class="field" type="text" placeholder="First name"            aria-label="Your name" />
-      <input id="reqSong"   class="field" type="text" placeholder="Song title"            aria-label="Song title" required />
-      <input id="reqArtist" class="field" type="text" placeholder="Artist name"           aria-label="Artist name" />
-      <input id="reqNote"   class="field" type="text" placeholder="Dedication or message" aria-label="Optional note" />
-      <button class="req-submit" id="reqSubmit" aria-label="Submit song request"></button>
+      <img class="bg" src="Request_BG.png" alt="FORGE Song Request" />
+      <input id="reqName"   class="req-field" type="text" placeholder="First name"            aria-label="Your name" />
+      <input id="reqSong"   class="req-field" type="text" placeholder="Song title"            aria-label="Song title" />
+      <input id="reqArtist" class="req-field" type="text" placeholder="Artist name"           aria-label="Artist name" />
+      <input id="reqNote"   class="req-field" type="text" placeholder="Dedication or message" aria-label="Optional note" />
+      <button class="req-submit-btn" id="reqSubmit" aria-label="Submit song request"></button>
       <div id="reqStatus" class="req-status" role="status" aria-live="polite"></div>
-
-      <div class="nav-listen"   onclick="switchTab('listen')"></div>
-      <div class="nav-news"     onclick="switchTab('news')"></div>
-      <div class="nav-request"  onclick="switchTab('request')"></div>
-      <div class="nav-shows"    onclick="switchTab('shows')"></div>
-      <div class="nav-partners" onclick="switchTab('partners')"></div>
+      <div class="hotspot nav-listen"   onclick="switchTab('listen')"></div>
+      <div class="hotspot nav-news"     onclick="switchTab('news')"></div>
+      <div class="hotspot nav-request"  onclick="switchTab('request')"></div>
+      <div class="hotspot nav-shows"    onclick="switchTab('shows')"></div>
+      <div class="hotspot nav-partners" onclick="switchTab('partners')"></div>
     </div>
 
-    <!-- SHOWS TAB -->
+    <!-- SHOWS -->
     <div class="tab-panel" id="panel-shows">
-      <div style="position:absolute;inset:0;background:#000;"></div>
-      <div class="page-header">Shows &amp; Events</div>
-      <div class="content-scroll">
-        <div class="show-item">
-          <div class="show-time">Every Friday Night @ 5pm</div>
-          <div class="show-name">20 The Countdown Magazine</div>
-          <div class="show-desc">William Ryan III counts down the Top 20 Christian songs every week in this 2-hour magazine-style show — the longest-running Christian music countdown in the world.</div>
+      <div class="black-panel">
+        <div class="panel-header">Shows &amp; Events</div>
+        <div class="content-scroll">
+          <div class="show-card">
+            <div class="show-time">Every Friday Night @ 5pm</div>
+            <div class="show-name">20 The Countdown Magazine</div>
+            <div class="show-desc">William Ryan III counts down the Top 20 Christian songs every week in this 2-hour magazine-style show — the longest-running Christian music countdown in the world.</div>
+          </div>
+          <div class="show-card">
+            <div class="show-time">Every Sunday @ 5pm</div>
+            <div class="show-name">Paul Harvey's The Rest of the Story</div>
+            <div class="show-desc">True stories, largely forgotten, based on a variety of subjects with a key element held back until the end.</div>
+          </div>
+          <div class="show-card">
+            <div class="show-time">Every Sunday @ 6pm</div>
+            <div class="show-name">Faith, Hope and Inspiration</div>
+            <div class="show-desc">Hosted by Chuck Shorter. Contemporary Christian songs, traditional hymns, and uplifting music with a positive message.</div>
+          </div>
+          <div class="show-card">
+            <div class="show-time">Every Saturday Night @ 7pm</div>
+            <div class="show-name">Christian Music Rewind</div>
+            <div class="show-desc">Your trip back in time to the greatest Christian hits from the past. The songs you grew up on, the songs that strengthened your faith.</div>
+          </div>
+          <div class="show-card">
+            <div class="show-time">Every Monday @ 6pm</div>
+            <div class="show-name">Christian Music Spotlight</div>
+            <div class="show-desc">Hosted by Brian David. A Spin Award winning Contemporary Christian Music show featuring new music, a verbal Top 5 countdown, and two 60-second devotionals.</div>
+          </div>
         </div>
-        <div class="show-item">
-          <div class="show-time">Every Sunday @ 5pm</div>
-          <div class="show-name">Paul Harvey's The Rest of the Story</div>
-          <div class="show-desc">True stories, largely forgotten, based on a variety of subjects with a key element held back until the end.</div>
-        </div>
-        <div class="show-item">
-          <div class="show-time">Every Sunday @ 6pm</div>
-          <div class="show-name">Faith, Hope and Inspiration</div>
-          <div class="show-desc">Hosted by Chuck Shorter. Contemporary Christian songs, traditional hymns, and uplifting music with a positive message.</div>
-        </div>
-        <div class="show-item">
-          <div class="show-time">Every Saturday Night @ 7pm</div>
-          <div class="show-name">Christian Music Rewind</div>
-          <div class="show-desc">Your trip back in time to the greatest Christian hits from the past. The songs you grew up on, the songs that strengthened your faith.</div>
-        </div>
-        <div class="show-item">
-          <div class="show-time">Every Monday @ 6pm</div>
-          <div class="show-name">Christian Music Spotlight</div>
-          <div class="show-desc">Hosted by Brian David. A Spin Award winning Contemporary Christian Music show featuring new music, a verbal Top 5 countdown, and two 60-second devotionals.</div>
+        <div class="bottom-nav">
+          <button class="bnav-btn" onclick="switchTab('listen')">
+            <svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+            <span>Listen</span>
+          </button>
+          <button class="bnav-btn" onclick="switchTab('news')">
+            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>
+            <span>News</span>
+          </button>
+          <button class="bnav-btn" onclick="switchTab('request')">
+            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+            <span>Request</span>
+          </button>
+          <button class="bnav-btn active" onclick="switchTab('shows')">
+            <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+            <span>Shows</span>
+          </button>
+          <button class="bnav-btn" onclick="switchTab('partners')">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            <span>Partners</span>
+          </button>
         </div>
       </div>
-
-      <div class="nav-listen"   onclick="switchTab('listen')"></div>
-      <div class="nav-news"     onclick="switchTab('news')"></div>
-      <div class="nav-request"  onclick="switchTab('request')"></div>
-      <div class="nav-shows"    onclick="switchTab('shows')"></div>
-      <div class="nav-partners" onclick="switchTab('partners')"></div>
     </div>
 
-    <!-- PARTNERS TAB -->
+    <!-- PARTNERS -->
     <div class="tab-panel" id="panel-partners">
-      <div style="position:absolute;inset:0;background:#000;"></div>
-      <div class="page-header">Our Partners</div>
-      <div class="content-scroll">
-        <div class="partner-item">
-          <img class="partner-logo" src="Forged_JiuJitsu.png" alt="Forged Jiu Jitsu" onerror="this.style.display='none'" />
-          <div class="partner-name">Forged Jiu Jitsu</div>
-          <div class="partner-desc">More than just a workout — Forged Jiu Jitsu exists to help people build discipline, confidence, humility, and resilience. A place where families find genuine community.</div>
-          <a class="partner-link" href="https://forged-bjj.com" target="_blank" rel="noopener">forged-bjj.com &rarr;</a>
+      <div class="black-panel">
+        <div class="panel-header">Our Partners</div>
+        <div class="content-scroll">
+          <div class="partner-card">
+            <img class="partner-logo" src="Forged_JiuJitsu.png" alt="Forged Jiu Jitsu" onerror="this.style.display='none'" />
+            <div class="partner-name">Forged Jiu Jitsu</div>
+            <div class="partner-desc">More than just a workout — Forged Jiu Jitsu exists to help people build discipline, confidence, humility, and resilience. A place where families find genuine community.</div>
+            <a class="partner-link" href="https://forged-bjj.com" target="_blank" rel="noopener">forged-bjj.com &rarr;</a>
+          </div>
+          <div class="partner-card">
+            <img class="partner-logo" src="https://primary.jwwb.nl/public/t/p/i/temp-opjgvzhfvplwbkmudlqi/fmc-logo-high.jpg" alt="Favored Marketing Consultants" onerror="this.style.display='none'" />
+            <div class="partner-name">Favored Marketing Consultants</div>
+            <div class="partner-desc">Connecting you to your community through expert social media management and brand development in Springfield, Missouri.</div>
+            <a class="partner-link" href="https://favoredmarketingconsultants.com" target="_blank" rel="noopener">favoredmarketingconsultants.com &rarr;</a>
+          </div>
+          <div class="partner-card">
+            <img class="partner-logo" src="New_Logo_may2026.png" alt="Sandbox'd Labs" onerror="this.style.display='none'" />
+            <div class="partner-name">Sandbox'd Labs</div>
+            <div class="partner-desc">Springfield, MO web design for small businesses built on integrity. A veteran-owned studio focused on clean, fast websites that actually work.</div>
+            <a class="partner-link" href="https://www.sandboxdlabs.com" target="_blank" rel="noopener">sandboxdlabs.com &rarr;</a>
+          </div>
+          <div class="partner-card">
+            <img class="partner-logo" src="https://primary.jwwb.nl/public/t/p/i/temp-opjgvzhfvplwbkmudlqi/safehaven-now-high.jpg" alt="SafeHaven Now" onerror="this.style.display='none'" />
+            <div class="partner-name">SafeHaven Now</div>
+            <div class="partner-desc">Food Pantry and Thrift Store serving the Rogersville and Fordland community since 2019. Providing essential resources to those in need through love and service.</div>
+          </div>
         </div>
-        <div class="partner-item">
-          <img class="partner-logo" src="https://primary.jwwb.nl/public/t/p/i/temp-opjgvzhfvplwbkmudlqi/fmc-logo-high.jpg" alt="Favored Marketing Consultants" onerror="this.style.display='none'" />
-          <div class="partner-name">Favored Marketing Consultants</div>
-          <div class="partner-desc">Connecting you to your community through expert social media management and brand development in Springfield, Missouri.</div>
-          <a class="partner-link" href="https://favoredmarketingconsultants.com" target="_blank" rel="noopener">favoredmarketingconsultants.com &rarr;</a>
-        </div>
-        <div class="partner-item">
-          <img class="partner-logo" src="New_Logo_may2026.png" alt="Sandbox'd Labs" onerror="this.style.display='none'" />
-          <div class="partner-name">Sandbox'd Labs</div>
-          <div class="partner-desc">Springfield, MO web design for small businesses built on integrity. A veteran-owned studio focused on clean, fast websites that actually work.</div>
-          <a class="partner-link" href="https://www.sandboxdlabs.com" target="_blank" rel="noopener">sandboxdlabs.com &rarr;</a>
-        </div>
-        <div class="partner-item">
-          <img class="partner-logo" src="https://primary.jwwb.nl/public/t/p/i/temp-opjgvzhfvplwbkmudlqi/safehaven-now-high.jpg" alt="SafeHaven Now" onerror="this.style.display='none'" />
-          <div class="partner-name">SafeHaven Now</div>
-          <div class="partner-desc">Food Pantry and Thrift Store serving the Rogersville and Fordland community since 2019. Providing essential resources to those in need through love and service.</div>
+        <div class="bottom-nav">
+          <button class="bnav-btn" onclick="switchTab('listen')">
+            <svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+            <span>Listen</span>
+          </button>
+          <button class="bnav-btn" onclick="switchTab('news')">
+            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>
+            <span>News</span>
+          </button>
+          <button class="bnav-btn" onclick="switchTab('request')">
+            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+            <span>Request</span>
+          </button>
+          <button class="bnav-btn" onclick="switchTab('shows')">
+            <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+            <span>Shows</span>
+          </button>
+          <button class="bnav-btn active" onclick="switchTab('partners')">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            <span>Partners</span>
+          </button>
         </div>
       </div>
-
-      <div class="nav-listen"   onclick="switchTab('listen')"></div>
-      <div class="nav-news"     onclick="switchTab('news')"></div>
-      <div class="nav-request"  onclick="switchTab('request')"></div>
-      <div class="nav-shows"    onclick="switchTab('shows')"></div>
-      <div class="nav-partners" onclick="switchTab('partners')"></div>
     </div>
 
+  </div>
+</div>
+
+<!-- NEWS MODAL -->
+<div class="modal" id="storyModal" role="dialog" aria-modal="true" aria-labelledby="storyTitle">
+  <div class="modal-card">
+    <div class="kicker" id="storyDate"></div>
+    <h2 id="storyTitle"></h2>
+    <p id="storyBody"></p>
+    <a id="storyLink" href="#" target="_blank" rel="noopener">Read full story &rarr;</a>
+    <button class="close-btn" id="closeModal" type="button">Close</button>
   </div>
 </div>
 
@@ -813,17 +658,9 @@ function setPlaying(on) {
   leftSpeaker.classList.toggle('playing', on);
   rightSpeaker.classList.toggle('playing', on);
   liveEq.classList.toggle('playing', on);
-  if (on) {
-    playBtn.setAttribute('aria-label', 'Pause FORGE Christian Radio');
-    streamStatus.textContent = 'Live Stream Playing';
-    streamStatus.classList.add('show');
-    setTimeout(() => streamStatus.classList.remove('show'), 2000);
-  } else {
-    playBtn.setAttribute('aria-label', 'Play FORGE Christian Radio');
-    streamStatus.textContent = 'Stream Paused';
-    streamStatus.classList.add('show');
-    setTimeout(() => streamStatus.classList.remove('show'), 1400);
-  }
+  streamStatus.textContent = on ? 'Live Stream Playing' : 'Stream Paused';
+  streamStatus.classList.add('show');
+  setTimeout(() => streamStatus.classList.remove('show'), on ? 2000 : 1400);
 }
 
 playBtn.addEventListener('click', async () => {
@@ -837,7 +674,7 @@ playBtn.addEventListener('click', async () => {
       stream.src = '';
       setPlaying(false);
     }
-  } catch(err) {
+  } catch {
     streamStatus.textContent = 'Tap Again to Start';
     streamStatus.classList.add('show');
     setTimeout(() => streamStatus.classList.remove('show'), 2000);
@@ -845,6 +682,46 @@ playBtn.addEventListener('click', async () => {
 });
 
 stream.addEventListener('ended', () => setPlaying(false));
+
+// ---- News modals ----
+const stories = {
+  sermons: {
+    date: 'July 13, 2026',
+    title: 'Live Sermons Coming to Forge Christian Radio',
+    body: 'FORGE Christian Radio will begin broadcasting LIVE Sunday morning sermons from First Baptist Church of Rogersville, MO, featuring the biblical preaching of Pastor Aaron Ipock. Coming September 6th!',
+    link: 'https://www.theforgeradio.org/3275767_live-sermons-coming-to-forge-christian-radio'
+  },
+  fooddrive: {
+    date: 'May 1, 2026',
+    title: 'Nationwide Food Drive',
+    body: 'Need help feeding families in your community? You can make a difference with the Letter Carriers\' Food Drive. Just place your non-perishable food donations in a bag by your mailbox before your mail arrives.',
+    link: 'https://www.theforgeradio.org/3146753_nationwide-food-drive'
+  },
+  safehaven: {
+    date: 'March 9, 2026',
+    title: 'SafeHaven Food Pantry & Thrift Store',
+    body: 'SafeHaven Food Pantry and Thrift Store in Rogersville and Fordland, MO is partnering up with The Forge. We will be working with SafeHaven to help the local communities. More info to come.',
+    link: 'https://www.theforgeradio.org/2922349_safe-haven-food-pantry-and-thriftstore'
+  }
+};
+
+const modal     = document.getElementById('storyModal');
+const closeModal = document.getElementById('closeModal');
+
+document.querySelectorAll('[data-story]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const s = stories[btn.dataset.story];
+    document.getElementById('storyDate').textContent  = s.date;
+    document.getElementById('storyTitle').textContent = s.title;
+    document.getElementById('storyBody').textContent  = s.body;
+    document.getElementById('storyLink').href         = s.link;
+    modal.classList.add('open');
+  });
+});
+
+closeModal.addEventListener('click', () => modal.classList.remove('open'));
+modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.remove('open'); });
 
 // ---- Song request via Formspree ----
 document.getElementById('reqSubmit').addEventListener('click', async () => {
@@ -870,16 +747,14 @@ document.getElementById('reqSubmit').addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({ name: name || 'Anonymous', song, artist, note })
     });
-    if (res.ok) {
-      status.textContent = 'Request Sent! God Bless You.';
-      ['reqName','reqSong','reqArtist','reqNote'].forEach(id => document.getElementById(id).value = '');
-    } else {
-      status.textContent = 'Something went wrong. Try again.';
-    }
+    status.textContent = res.ok ? 'Request Sent! God Bless You.' : 'Something went wrong. Try again.';
   } catch {
     status.textContent = 'Something went wrong. Try again.';
   }
 
+  if (document.getElementById('reqStatus').textContent === 'Request Sent! God Bless You.') {
+    ['reqName','reqSong','reqArtist','reqNote'].forEach(id => document.getElementById(id).value = '');
+  }
   setTimeout(() => status.classList.remove('show'), 3000);
 });
 </script>
