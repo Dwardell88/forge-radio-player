@@ -1,5 +1,5 @@
 // Service Worker v1.20
-const CACHE_NAME = 'forge-radio-v32'; // Incremented to v32 to force Charles's phone to update
+const CACHE_NAME = 'forge-radio-v33'; // Incremented to v32 to force Charles's phone to update
 
 self.addEventListener('install', e => {
     self.skipWaiting();
