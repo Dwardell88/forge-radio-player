@@ -79,12 +79,15 @@ body {
 .nav-partners { left: 80%; top: 91.2%; width: 20%; height: 8.8%; z-index: 10; }
 
 @media (min-width: 540px) {
-  body { align-items: center; padding: 18px 0; }
+  body {
+    align-items: center;
+    padding: 18px 0;
+  }
+
   .forge-wrap {
-    width: auto;
+    width: min(100vw, 520px);
     height: calc(100svh - 36px);
     max-height: 960px;
-    aspect-ratio: unset;
   }
 }
 
