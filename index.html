@@ -85,9 +85,10 @@ body {
   }
 
   .forge-wrap {
-    width: min(100vw, 520px);
-    height: calc(100svh - 36px);
-    max-height: 960px;
+    width: min(520px, calc((100svh - 36px) * 9 / 16));
+    aspect-ratio: 9 / 16;
+    height: auto;
+    max-height: calc(100svh - 36px);
   }
 }
 
