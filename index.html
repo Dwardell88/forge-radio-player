@@ -42,7 +42,7 @@ body {
 .forge-wrap {
   position: relative;
   width: min(100vw, 520px);
-  aspect-ratio: 2 / 3;
+  height: 100svh;
   background: #000;
   overflow: hidden;
 }
@@ -97,7 +97,7 @@ body {
   z-index: 100;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   background: #000;
   transition: opacity 0.8s ease;
 }
@@ -118,7 +118,7 @@ body {
   z-index: 10;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   opacity: 0;
   transition: opacity 0.8s ease;
   pointer-events: none;
@@ -349,6 +349,7 @@ body {
 .black-panel {
   position: absolute; inset: 0;
   background: #000; overflow: hidden;
+  display: flex; flex-direction: column;
 }
 
 .panel-header {
