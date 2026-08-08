@@ -48,8 +48,8 @@ body {
 ===================== */
 .forge-wrap {
   position: relative;
-  width: min(100vw, 520px, calc(100svh * 2 / 3));
-  aspect-ratio: 2 / 3;
+  width: min(100vw, 520px, calc(100svh * 25 / 48));
+  aspect-ratio: 25 / 48;
   background: #000;
   overflow: hidden;
   flex: 0 0 auto;
@@ -68,18 +68,18 @@ body {
   -webkit-user-drag: none;
 }
 
-/* Fill tall mobile viewports. Stretching the complete 2:3 artwork keeps
-   percentage-positioned hotspots aligned and avoids cropping controls. */
+/* Preserve the complete 1000x1920 artwork and keep percentage-positioned
+   hotspots aligned with it on mobile screens. */
 @media (max-width: 539px) {
   .forge-wrap {
-    width: 100vw;
-    height: 100vh;
-    height: 100svh;
-    aspect-ratio: auto;
+    width: min(100vw, calc(100svh * 25 / 48));
+    height: auto;
+    aspect-ratio: 25 / 48;
   }
 
   .forge-wrap .bg {
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center center;
   }
 }
 
@@ -109,7 +109,7 @@ body {
   }
 
   .forge-wrap {
-    width: min(520px, calc((100svh - 36px) * 2 / 3));
+    width: min(520px, calc((100svh - 36px) * 25 / 48));
   }
 }
 
@@ -390,7 +390,7 @@ body {
 
 .content-scroll {
   position: absolute; left: 0; right: 0;
-  top: 60px; bottom: 9%;
+  top: 60px; bottom: 58px;
   overflow-y: auto; -webkit-overflow-scrolling: touch;
   z-index: 4; padding: 12px 16px;
 }
@@ -430,8 +430,8 @@ body {
 /* Shows/Partners nav at bottom */
 .bottom-nav {
   position: absolute; bottom: 0; left: 0; right: 0;
-  height: 9%; display: flex; z-index: 10;
-  background: rgba(0,0,0,0.9);
+  height: 58px; display: flex; z-index: 10;
+  background: rgba(0,0,0,0.95);
   border-top: 1px solid rgba(255,196,0,0.2);
 }
 .bnav-btn {
