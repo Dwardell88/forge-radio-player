@@ -1,40 +1,54 @@
-// Service Worker v1.20
-const CACHE_NAME = 'forge-radio-v48'; // Incremented to v36 to force Charles's phone to update
+const CACHE = "forge-pwa-v1";
+const CORE = [
+  "/", "/home/", "/news/", "/request/", "/shows/", "/our-partners/",
+  "/prayer-wall/", "/install/", "/offline.html", "/manifest.webmanifest",
+  "/icons/icon-192.png", "/icons/icon-512.png", "/icons/maskable-512.png",
+  "/icons/apple-touch-icon.png", "/icons/favicon-64.png"
+];
 
-self.addEventListener('install', e => {
-    self.skipWaiting();
+self.addEventListener("install", event => {
+  event.waitUntil(
+    caches.open(CACHE).then(cache =>
+      Promise.allSettled(CORE.map(url => cache.add(url)))
+    ).then(() => self.skipWaiting())
+  );
 });
 
-self.addEventListener('activate', e => {
-    e.waitUntil(
-        caches.keys().then(keys => 
-            Promise.all(
-                keys
-                    .filter(k => k !== CACHE_NAME)
-                    .map(k => caches.delete(k))
-            )
-        )
-    );
-    self.clients.claim();
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
 });
 
-self.addEventListener('fetch', e => {
-    const url = new URL(e.request.url);
+self.addEventListener("fetch", event => {
+  const req = event.request;
+  if (req.method !== "GET") return;
 
-    // 1. CRITICAL BYPASS: Do not save Live365 or dynamic audio chunks to the phone's cache database
-    if (url.hostname.includes('live365.com') || url.pathname.match(/\.(mp3|m3u8|aac|ts)$/)) {
-        e.respondWith(fetch(e.request, { cache: 'no-store' }));
-        return;
-    }
+  const url = new URL(req.url);
 
-    // 2. KEEP ORIGINAL LOGIC: Continue caching standard website files (HTML, images, CSS)
-    e.respondWith(
-        fetch(e.request)
-            .then(response => {
-                const clone = response.clone();
-                caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
-                return response;
-            })
-            .catch(() => caches.match(e.request))
+  // Never cache the Live365 audio stream or other cross-origin requests.
+  if (url.origin !== self.location.origin) return;
+
+  if (req.mode === "navigate") {
+    event.respondWith(
+      fetch(req)
+        .then(res => {
+          const copy = res.clone();
+          caches.open(CACHE).then(cache => cache.put(req, copy));
+          return res;
+        })
+        .catch(() => caches.match(req).then(r => r || caches.match("/offline.html")))
     );
+    return;
+  }
+
+  event.respondWith(
+    caches.match(req).then(cached => cached || fetch(req).then(res => {
+      const copy = res.clone();
+      caches.open(CACHE).then(cache => cache.put(req, copy));
+      return res;
+    }))
+  );
 });

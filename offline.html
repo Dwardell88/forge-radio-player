@@ -1,0 +1,20 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FORGE Offline</title><style>body{margin:0;background:#050505;color:#fff;font-family:Arial,sans-serif;display:grid;place-items:center;min-height:100vh;text-align:center;padding:24px}h1{color:#ffc400}a{color:#ffc400}</style>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="64x64" href="/icons/favicon-64.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FORGE Radio">
+
+</head>
+<body><main><h1>FORGE Christian Radio</h1><p>You are currently offline. Reconnect to the internet to play the live radio stream.</p><p><a href="/home">Try Again</a></p></main>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/service-worker.js").catch(() => {});
+  });
+}
+</script>
+
+</body></html>
