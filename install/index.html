@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Install FORGE Christian Radio</title><meta name="theme-color" content="#000000">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#050505;color:#fff;font-family:Arial,sans-serif;display:flex;justify-content:center}
+main{width:min(100%,520px);min-height:100svh;padding:38px 24px;background:radial-gradient(circle at 50% 10%,rgba(255,196,0,.13),transparent 28%),#070707}
+h1{font-size:2.5rem;margin:0;color:#ffc400}p{color:#bbb;line-height:1.6}.box{margin-top:18px;padding:18px;border:1px solid rgba(255,196,0,.25);border-radius:14px;background:#101010}
+button,a.button{display:block;width:100%;margin-top:18px;padding:14px;border:0;border-radius:10px;background:#ffc400;color:#050505;font-weight:1000;text-align:center;text-decoration:none;font-size:1rem}
+small{color:#888;line-height:1.5;display:block;margin-top:12px}
+</style>
+
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="64x64" href="/icons/favicon-64.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FORGE Radio">
+
+</head><body><main>
+<h1>Install FORGE</h1>
+<p>Install FORGE Christian Radio directly from the website—no app store required.</p>
+<button id="installBtn" type="button">Install FORGE App</button>
+<div class="box"><strong>iPhone / iPad</strong><p>Open this site in Safari → tap Share → Add to Home Screen → Add.</p></div>
+<div class="box"><strong>Android</strong><p>Open this site in Chrome → tap the menu → Install app or Add to Home screen.</p></div>
+<a class="button" href="/home">Open FORGE</a>
+<small>The install button appears automatically on supported browsers. iPhone uses Safari's Add to Home Screen option.</small>
+<script>
+let deferredPrompt;
+const btn=document.getElementById("installBtn");
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;btn.style.display="block"});
+btn.addEventListener("click",async()=>{if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null}else{alert("If your browser does not show an install prompt, use its menu and choose Add to Home Screen or Install App.")}});
+</script>
+</main>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/service-worker.js").catch(() => {});
+  });
+}
+</script>
+
+</body></html>

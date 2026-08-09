@@ -1,0 +1,472 @@
+
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="64x64" href="/icons/favicon-64.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FORGE Radio">
+<!-- FORGE PRAYER CENTER — WEBADOR SAFE, NO JAVASCRIPT -->
+<div id="forgePrayerCenterStatic">
+  <style>
+    #forgePrayerCenterStatic,
+    #forgePrayerCenterStatic * { box-sizing: border-box; }
+
+    #forgePrayerCenterStatic {
+      --yellow:#ffc400;
+      --gold:#ff9900;
+      --panel:#151515;
+      --muted:#bcc1c7;
+      width:100%;
+      color:#fff;
+      font-family:Arial,Helvetica,sans-serif;
+      background:
+        radial-gradient(circle at 15% 10%,rgba(255,196,0,.10),transparent 28%),
+        radial-gradient(circle at 85% 70%,rgba(255,153,0,.08),transparent 25%),
+        linear-gradient(rgba(6,6,6,.97),rgba(6,6,6,.99)),
+        repeating-linear-gradient(30deg,#151515 0 1px,transparent 1px 22px),
+        repeating-linear-gradient(150deg,#151515 0 1px,transparent 1px 22px);
+      border:1px solid rgba(255,196,0,.20);
+      overflow:hidden;
+    }
+
+    #forgePrayerCenterStatic .hero {
+      padding:70px 5%;
+      background:
+        linear-gradient(rgba(5,5,5,.78),rgba(5,5,5,.92)),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='116' height='100' viewBox='0 0 116 100'%3E%3Cg fill='none' stroke='%23ffc400' stroke-width='2.2' stroke-opacity='.28'%3E%3Cpath d='M29 2 56 17v31L29 63 2 48V17Z'/%3E%3Cpath d='M87 2 114 17v31L87 63 60 48V17Z'/%3E%3Cpath d='M58 37 85 52v31L58 98 31 83V52Z'/%3E%3C/g%3E%3C/svg%3E");
+      background-size:auto,116px 100px;
+      border-bottom:1px solid rgba(255,196,0,.18);
+    }
+
+    #forgePrayerCenterStatic .hero-grid {
+      width:min(1100px,100%);
+      margin:auto;
+      display:grid;
+      grid-template-columns:1.25fr .75fr;
+      gap:32px;
+      align-items:center;
+    }
+
+    #forgePrayerCenterStatic .eyebrow {
+      color:var(--yellow);
+      font-size:.78rem;
+      font-weight:900;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      margin-bottom:14px;
+    }
+
+    #forgePrayerCenterStatic h1 {
+      margin:0;
+      font-size:clamp(3rem,8vw,6.5rem);
+      line-height:.86;
+      letter-spacing:-.055em;
+      text-transform:uppercase;
+      font-weight:1000;
+      color:#f1f3f5;
+      text-shadow:0 8px 0 #000,0 0 18px rgba(255,196,0,.16);
+    }
+
+    #forgePrayerCenterStatic h1 span {
+      display:block;
+      color:var(--yellow);
+    }
+
+    #forgePrayerCenterStatic .hero-copy {
+      max-width:700px;
+      margin:22px 0 0;
+      color:#d0d3d7;
+      font-size:1.05rem;
+      line-height:1.7;
+    }
+
+    #forgePrayerCenterStatic .verse {
+      padding:28px;
+      border-radius:20px;
+      background:linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,.015)),var(--panel);
+      border:1px solid rgba(255,255,255,.09);
+      border-top:4px solid var(--yellow);
+      box-shadow:0 20px 50px rgba(0,0,0,.45),0 0 30px rgba(255,196,0,.12);
+    }
+
+    #forgePrayerCenterStatic .verse-label {
+      color:var(--yellow);
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      font-size:.74rem;
+      font-weight:1000;
+    }
+
+    #forgePrayerCenterStatic .verse blockquote {
+      margin:18px 0 10px;
+      font-size:1.28rem;
+      line-height:1.5;
+      font-weight:800;
+    }
+
+    #forgePrayerCenterStatic .verse-ref {
+      color:var(--muted);
+      font-weight:800;
+    }
+
+    #forgePrayerCenterStatic .main {
+      width:min(1100px,92%);
+      margin:auto;
+      padding:60px 0 80px;
+    }
+
+    #forgePrayerCenterStatic .section-title {
+      margin:0 0 10px;
+      font-size:clamp(2rem,5vw,3.25rem);
+      text-transform:uppercase;
+      letter-spacing:-.04em;
+    }
+
+    #forgePrayerCenterStatic .section-title span { color:var(--yellow); }
+
+    #forgePrayerCenterStatic .section-copy {
+      max-width:780px;
+      color:var(--muted);
+      line-height:1.7;
+      margin:0 0 26px;
+    }
+
+    #forgePrayerCenterStatic .grid-two {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:22px;
+      align-items:start;
+      margin-bottom:64px;
+    }
+
+    #forgePrayerCenterStatic .panel {
+      border-radius:20px;
+      padding:clamp(22px,4vw,36px);
+      background:linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,.015)),var(--panel);
+      border:1px solid rgba(255,255,255,.09);
+      box-shadow:0 20px 50px rgba(0,0,0,.42);
+    }
+
+    #forgePrayerCenterStatic .panel h3 {
+      margin:0 0 8px;
+      font-size:1.4rem;
+    }
+
+    #forgePrayerCenterStatic .panel p {
+      color:#bec2c7;
+      line-height:1.6;
+    }
+
+    #forgePrayerCenterStatic form {
+      display:grid;
+      gap:15px;
+      margin-top:22px;
+    }
+
+    #forgePrayerCenterStatic .form-row {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:13px;
+    }
+
+    #forgePrayerCenterStatic label {
+      display:block;
+      margin-bottom:7px;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      font-size:.78rem;
+      font-weight:1000;
+      color:#eee;
+    }
+
+    #forgePrayerCenterStatic input,
+    #forgePrayerCenterStatic select,
+    #forgePrayerCenterStatic textarea {
+      width:100%;
+      border-radius:11px;
+      border:1px solid rgba(255,255,255,.14);
+      background:#0b0b0b;
+      color:#fff;
+      padding:13px;
+      font:inherit;
+      outline:none;
+    }
+
+    #forgePrayerCenterStatic textarea {
+      min-height:145px;
+      resize:vertical;
+    }
+
+    #forgePrayerCenterStatic .check {
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      color:#c8c8c8;
+      font-size:.9rem;
+      line-height:1.5;
+      text-transform:none;
+      letter-spacing:normal;
+    }
+
+    #forgePrayerCenterStatic .check input {
+      width:auto;
+      margin-top:3px;
+      accent-color:var(--yellow);
+    }
+
+    #forgePrayerCenterStatic .notice,
+    #forgePrayerCenterStatic .admin-note {
+      padding:14px;
+      border-radius:11px;
+      background:rgba(255,196,0,.07);
+      border:1px solid rgba(255,196,0,.23);
+      color:#e4e4e4;
+      font-size:.9rem;
+      line-height:1.55;
+    }
+
+    #forgePrayerCenterStatic .btn {
+      border:0;
+      border-radius:999px;
+      padding:14px 22px;
+      font-weight:1000;
+      cursor:pointer;
+      color:#070707;
+      background:linear-gradient(135deg,#fff06a,var(--yellow),var(--gold));
+      box-shadow:0 10px 28px rgba(255,196,0,.20);
+    }
+
+    #forgePrayerCenterStatic .side-card {
+      padding:20px;
+      border-radius:15px;
+      background:linear-gradient(135deg,rgba(255,196,0,.12),transparent 55%),#101010;
+      border:1px solid rgba(255,196,0,.22);
+      margin-top:16px;
+    }
+
+    #forgePrayerCenterStatic .side-card strong {
+      color:var(--yellow);
+      display:block;
+      margin-bottom:8px;
+    }
+
+    #forgePrayerCenterStatic .wall {
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:17px;
+    }
+
+    #forgePrayerCenterStatic .empty {
+      grid-column:1/-1;
+      text-align:center;
+      color:#aaa;
+      padding:42px;
+      border-radius:16px;
+      border:1px dashed rgba(255,255,255,.13);
+    }
+
+    #forgePrayerCenterStatic .admin-note { margin-top:24px; }
+
+    #forgePrayerCenterStatic .footer {
+      text-align:center;
+      padding:34px 4%;
+      color:#969696;
+      border-top:1px solid rgba(255,255,255,.08);
+      background:#080808;
+      line-height:1.65;
+    }
+
+    #forgePrayerCenterStatic .footer strong { color:var(--yellow); }
+
+    @media (max-width:900px) {
+      #forgePrayerCenterStatic .hero-grid,
+      #forgePrayerCenterStatic .grid-two { grid-template-columns:1fr; }
+      #forgePrayerCenterStatic .wall { grid-template-columns:repeat(2,1fr); }
+    }
+
+    @media (max-width:620px) {
+      #forgePrayerCenterStatic .form-row,
+      #forgePrayerCenterStatic .wall { grid-template-columns:1fr; }
+      #forgePrayerCenterStatic .hero { padding:52px 5%; }
+    }
+
+    #forgePrayerCenterStatic .request-card {
+      border-radius:16px;
+      padding:22px;
+      background:
+        linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,.015)),
+        var(--panel);
+      border:1px solid rgba(255,255,255,.09);
+      border-left:4px solid var(--yellow);
+      box-shadow:0 18px 42px rgba(0,0,0,.38);
+    }
+
+    #forgePrayerCenterStatic .request-card .request-type {
+      color:var(--yellow);
+      font-size:.72rem;
+      font-weight:1000;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin-bottom:8px;
+    }
+
+    #forgePrayerCenterStatic .request-card h3 {
+      margin:0 0 8px;
+      font-size:1.22rem;
+      line-height:1.35;
+      color:#fff;
+    }
+
+    #forgePrayerCenterStatic .request-card .request-name {
+      color:#f0f0f0;
+      font-weight:800;
+      margin-bottom:13px;
+    }
+
+    #forgePrayerCenterStatic .request-card .request-message {
+      color:#c9cdd1;
+      line-height:1.7;
+      margin:0 0 16px;
+    }
+
+    #forgePrayerCenterStatic .request-card .request-date {
+      color:#8e9499;
+      font-size:.82rem;
+      border-top:1px solid rgba(255,196,0,.14);
+      padding-top:12px;
+    }
+
+  </style>
+
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">Faith • Hope • Encouragement</div>
+        <h1>FORGE <span>Prayer Center</span></h1>
+        <p class="hero-copy">
+          Share a prayer request, lift up others, celebrate answered prayer,
+          and stay connected to encouragement from FORGE Christian Radio.
+        </p>
+      </div>
+
+      <aside class="verse">
+        <div class="verse-label">Daily Encouragement</div>
+        <blockquote>“The Lord is near to all who call on Him, to all who call on Him in truth.”</blockquote>
+        <div class="verse-ref">Psalm 145:18</div>
+      </aside>
+    </div>
+  </section>
+
+  <div class="main">
+    <section>
+      <h2 class="section-title">Share Your <span>Prayer</span></h2>
+      <p class="section-copy">
+        Fill out the form below. When you press the button, your email app will open with the request
+        addressed to info@theforgeradio.org. Press Send to deliver it.
+      </p>
+
+      <div class="grid-two">
+        <div class="panel">
+          <h3>Prayer Request Form</h3>
+          <p>You may use your name, initials, or submit anonymously.</p>
+
+          <form action="mailto:info@theforgeradio.org" method="post" enctype="text/plain">
+            <div class="form-row">
+              <div>
+                <label for="forgePrayerName">Name or Initials</label>
+                <input id="forgePrayerName" name="Name" type="text" maxlength="60" placeholder="Anonymous is okay">
+              </div>
+              <div>
+                <label for="forgePrayerCategory">Request Type</label>
+                <select id="forgePrayerCategory" name="Request Type">
+                  <option>Prayer Request</option>
+                  <option>Family</option>
+                  <option>Healing</option>
+                  <option>Guidance</option>
+                  <option>Church &amp; Ministry</option>
+                  <option>Praise Report</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label for="forgePrayerTitle">Request Title</label>
+              <input id="forgePrayerTitle" name="Request Title" type="text" maxlength="80" required placeholder="Example: Prayer for my family">
+            </div>
+
+            <div>
+              <label for="forgePrayerMessage">Prayer Request or Praise Report</label>
+              <textarea id="forgePrayerMessage" name="Prayer Request" maxlength="700" required placeholder="Tell us how we can pray for you..."></textarea>
+            </div>
+
+            <div>
+              <label for="forgePrayerEmail">Email Address — Optional</label>
+              <input id="forgePrayerEmail" name="Reply Email" type="email" maxlength="120" placeholder="Only if you want a response">
+            </div>
+
+            <label class="check">
+              <input name="Private Request" type="checkbox" value="Yes">
+              <span>Keep this request private and do not display it on the public Prayer Wall.</span>
+            </label>
+
+            <label class="check">
+              <input name="Permission Given" type="checkbox" value="Yes" required>
+              <span>I give FORGE Christian Radio permission to receive and pray over this request.</span>
+            </label>
+
+            <div class="notice">
+              This Prayer Center is not an emergency or professional counseling service.
+              In an immediate emergency, contact local emergency services.
+            </div>
+
+            <button class="btn" type="submit">Prepare Prayer Email</button>
+          </form>
+        </div>
+
+        
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Community <span>Prayer Wall</span></h2>
+      <p class="section-copy">
+        Approved public requests can be pasted into this section as new cards. Private requests should never be posted.
+      </p>
+
+      
+      <div class="wall">
+        <article class="request-card">
+          <div class="request-type">Prayer Request</div>
+          <h3>Prayers for Ariana Grande</h3>
+          <div class="request-name">Michelle</div>
+          <p class="request-message">
+            Please pray for Ariana Grande that she gets better, and please pray that she turns her life over to God. Thank you.
+          </p>
+          <div class="request-date">August 7, 2026</div>
+        </article>
+      </div>
+
+</section>
+  </div>
+
+  <div class="footer">
+    <strong>FORGE Christian Radio</strong><br>
+    Worship • Hits • Encouragement • 24/7<br>
+    theforgeradio.org
+  </div>
+</div>
+<div style="position:sticky;bottom:0;z-index:9999;display:grid;grid-template-columns:repeat(4,1fr);
+background:#050505;border-top:1px solid rgba(255,196,0,.25);font-family:Arial,sans-serif">
+  <a href="/home" style="padding:13px 4px;text-align:center;color:#aaa;text-decoration:none;font-size:12px">LISTEN</a>
+  <a href="/news" style="padding:13px 4px;text-align:center;color:#aaa;text-decoration:none;font-size:12px">NEWS</a>
+  <a href="/request" style="padding:13px 4px;text-align:center;color:#aaa;text-decoration:none;font-size:12px">REQUEST</a>
+  <a href="/prayer-wall" style="padding:13px 4px;text-align:center;color:#ffc400;text-decoration:none;font-size:12px">PRAYER</a>
+</div>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/service-worker.js").catch(() => {});
+  });
+}
+</script>
