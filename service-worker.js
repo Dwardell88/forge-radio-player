@@ -1,4 +1,4 @@
-const CACHE = "forge-pwa-v1";
+const CACHE = "forge-pwa-v2";
 const CORE = [
   "/", "/home/", "/news/", "/request/", "/shows/", "/our-partners/",
   "/prayer-wall/", "/install/", "/offline.html", "/manifest.webmanifest",
