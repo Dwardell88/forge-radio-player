@@ -33,6 +33,72 @@ body{display:flex;justify-content:center;align-items:flex-start;min-height:100sv
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="FORGE Radio">
 
+
+<style id="forge-fullscreen-fix">
+  html, body {
+    width: 100%;
+    min-width: 100%;
+    height: 100%;
+    min-height: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+    background: #000;
+  }
+
+  body {
+    width: 100vw !important;
+    min-height: 100vh !important;
+    min-height: 100svh !important;
+    min-height: 100dvh !important;
+    display: block !important;
+  }
+
+  .forge-request {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    max-width: none !important;
+    height: 100vh !important;
+    height: 100svh !important;
+    height: 100dvh !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    max-height: none !important;
+    aspect-ratio: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #000 !important;
+  }
+
+  .forge-request>img {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
+    object-fit: fill !important;
+    object-position: center center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  @media (min-width: 540px) {
+    body {
+      padding: 0 !important;
+      align-items: initial !important;
+    }
+
+    .forge-request {
+      width: 100vw !important;
+      height: 100dvh !important;
+      max-height: none !important;
+    }
+  }
+</style>
+
 </head>
 <body>
 <main class="forge-request" aria-label="FORGE Christian Radio song request page">
