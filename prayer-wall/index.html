@@ -1,13 +1,8 @@
 
-<style id="forge-prayer-fullscreen-fix">
-  html,body{margin:0!important;width:100%;min-width:100%;min-height:100vh;min-height:100dvh;background:#060606}
-  #forgePrayerCenterStatic{
-    width:100%!important;
-    min-width:100%!important;
-    min-height:100vh!important;
-    min-height:100dvh!important;
-    margin:0!important;
-  }
+<style id="forge-prayer-safe-screen">
+  html,body{margin:0!important;width:100%;min-height:100%;background:#060606}
+  body{min-height:100vh;min-height:100dvh;padding-bottom:env(safe-area-inset-bottom)}
+  #forgePrayerCenterStatic{width:100%!important;min-width:100%!important;min-height:100vh!important;min-height:100dvh!important}
 </style>
 
 <link rel="manifest" href="/manifest.webmanifest">

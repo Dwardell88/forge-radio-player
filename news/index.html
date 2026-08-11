@@ -187,68 +187,132 @@
 <meta name="apple-mobile-web-app-title" content="FORGE Radio">
 
 
-<style id="forge-fullscreen-fix">
-  html, body {
-    width: 100%;
-    min-width: 100%;
-    height: 100%;
-    min-height: 100%;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden;
-    background: #000;
+
+<style id="forge-responsive-screen-fix">
+  html,body {
+    margin:0!important;
+    padding:0!important;
+    width:100%!important;
+    height:100%!important;
+    min-height:100%!important;
+    background:#000!important;
+    overflow:hidden!important;
   }
 
   body {
-    width: 100vw !important;
-    min-height: 100vh !important;
-    min-height: 100svh !important;
-    min-height: 100dvh !important;
-    display: block !important;
+    position:relative!important;
+    width:100vw!important;
+    height:100vh!important;
+    height:100svh!important;
+    height:100dvh!important;
+    background:#000!important;
   }
 
   .forge-news {
-    position: fixed !important;
-    inset: 0 !important;
-    width: 100vw !important;
-    max-width: none !important;
-    height: 100vh !important;
-    height: 100svh !important;
-    height: 100dvh !important;
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
-    max-height: none !important;
-    aspect-ratio: auto !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-    background: #000 !important;
+    position:fixed!important;
+    top:0!important;
+    left:50%!important;
+    transform:translateX(-50%)!important;
+    height:100vh!important;
+    height:100svh!important;
+    height:100dvh!important;
+    width:auto!important;
+    min-width:100vw!important;
+    max-width:none!important;
+    max-height:none!important;
+    aspect-ratio:2/3!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:hidden!important;
+    background:#000!important;
   }
 
   .forge-news > img {
-    position: absolute !important;
-    inset: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-width: 100% !important;
-    min-height: 100% !important;
-    object-fit: fill !important;
-    object-position: center center !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    position:absolute!important;
+    inset:0!important;
+    width:100%!important;
+    height:100%!important;
+    object-fit:fill!important;
+    object-position:center center!important;
+    pointer-events:none!important;
+    user-select:none!important;
   }
 
-  @media (min-width: 540px) {
-    body {
-      padding: 0 !important;
-      align-items: initial !important;
-    }
+  /* Hide the navigation artwork baked into the bottom of the image.
+     A real fixed navigation bar is placed above it so it can never be cut off. */
+  .forge-baked-nav-mask {
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:9.2%;
+    z-index:50;
+    background:
+      linear-gradient(180deg,rgba(8,8,8,.98),#030303 45%,#000);
+    border-top:1px solid rgba(255,196,0,.20);
+    pointer-events:none;
+    display:block;
+  }
 
-    .forge-news {
-      width: 100vw !important;
-      height: 100dvh !important;
-      max-height: none !important;
+  .forge-fixed-nav {
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:9999;
+    height:calc(76px + env(safe-area-inset-bottom));
+    padding-bottom:env(safe-area-inset-bottom);
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    background:
+      linear-gradient(180deg,#111214,#050505 55%,#000);
+    border-top:1px solid rgba(255,196,0,.30);
+    box-shadow:0 -8px 24px rgba(0,0,0,.65);
+  }
+
+  .forge-fixed-nav a {
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    min-width:0;
+    color:#777;
+    text-decoration:none;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    border-right:1px solid rgba(255,255,255,.07);
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  .forge-fixed-nav a:last-child { border-right:0; }
+
+  .forge-fixed-nav .nav-icon {
+    font-size:23px;
+    line-height:1;
+    font-weight:700;
+  }
+
+  .forge-fixed-nav a.active {
+    color:#ffc400;
+    background:
+      radial-gradient(circle at 50% 25%,rgba(255,196,0,.16),transparent 55%),
+      rgba(255,196,0,.025);
+    box-shadow:
+      inset 0 2px 0 #ffc400,
+      inset 0 0 16px rgba(255,196,0,.08);
+  }
+
+  @media (max-height:700px) {
+    .forge-fixed-nav {
+      height:calc(66px + env(safe-area-inset-bottom));
     }
+    .forge-fixed-nav .nav-icon {font-size:20px}
+    .forge-fixed-nav a {font-size:8px}
   }
 </style>
 
@@ -293,12 +357,14 @@
       Visit Facebook
     </a>
 
-    <a class="hotspot listen" href="/home" aria-label="Listen">Listen</a>
-    <a class="hotspot news" href="/news" aria-label="News">News</a>
-    <a class="hotspot request" href="/request" aria-label="Song Request">Request</a>
-    <a class="hotspot shows" href="/shows" aria-label="Shows">Shows</a>
-    <a class="hotspot partners" href="/our-partners" aria-label="Partners">Partners</a>
-  </main>
+    <a class="hotspot listen" href="/home" aria-label="Listen" style="pointer-events:none">Listen</a>
+    <a class="hotspot news" href="/news" aria-label="News" style="pointer-events:none">News</a>
+    <a class="hotspot request" href="/request" aria-label="Song Request" style="pointer-events:none">Request</a>
+    <a class="hotspot shows" href="/shows" aria-label="Shows" style="pointer-events:none">Shows</a>
+    <a class="hotspot partners" href="/our-partners" aria-label="Partners" style="pointer-events:none">Partners</a>
+  
+<div class="forge-baked-nav-mask" aria-hidden="true"></div>
+</main>
 
   <div class="modal" id="storyModal" role="dialog" aria-modal="true" aria-labelledby="storyTitle">
     <div class="modal-card">
@@ -368,6 +434,15 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
+
+
+<nav class="forge-fixed-nav" aria-label="FORGE app navigation">
+  <a href="/home" data-forge-tab="listen"><span class="nav-icon">♪</span><span>Listen</span></a>
+  <a href="/news" data-forge-tab="news" class="active"><span class="nav-icon">▤</span><span>News</span></a>
+  <a href="/request" data-forge-tab="request"><span class="nav-icon">✉</span><span>Request</span></a>
+  <a href="/shows" data-forge-tab="shows"><span class="nav-icon">▣</span><span>Shows</span></a>
+  <a href="/our-partners" data-forge-tab="partners"><span class="nav-icon">●●●</span><span>Partners</span></a>
+</nav>
 
 </body>
 </html>

@@ -32,11 +32,12 @@ display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid rgba(255,1
 <meta name="apple-mobile-web-app-title" content="FORGE Radio">
 
 
-<style id="forge-layout-fullscreen-fix">
-  html,body{width:100%;min-width:100%;min-height:100vh;min-height:100dvh;margin:0!important;background:#000}
-  body{width:100vw!important;min-height:100vh!important;min-height:100dvh!important}
-  .app,main{width:100%!important;max-width:none!important;min-height:100vh!important;min-height:100dvh!important}
-  .nav{width:100%!important;max-width:none!important}
+
+<style id="forge-native-safe-nav">
+  html,body{margin:0!important;width:100%;min-height:100%;background:#000}
+  body{min-height:100vh;min-height:100dvh;padding-bottom:calc(82px + env(safe-area-inset-bottom))!important}
+  .app{width:100%!important;max-width:none!important;min-height:100vh!important;min-height:100dvh!important}
+  .nav{position:fixed!important;left:0!important;right:0!important;bottom:0!important;transform:none!important;width:100%!important;max-width:none!important;height:calc(76px + env(safe-area-inset-bottom))!important;padding-bottom:env(safe-area-inset-bottom)!important;z-index:9999!important}
 </style>
 
 </head>
