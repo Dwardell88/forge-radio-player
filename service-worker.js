@@ -1,4 +1,4 @@
-const CACHE = "forge-pwa-v3-responsive-safe-nav";
+const CACHE = "forge-pwa-v5-responsive-safe-nav";
 const CORE = [
   "/", "/home/", "/news/", "/request/", "/shows/", "/our-partners/",
   "/prayer-wall/", "/install/", "/offline.html", "/manifest.webmanifest",
